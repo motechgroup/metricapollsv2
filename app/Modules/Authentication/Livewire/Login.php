@@ -1,0 +1,119 @@
+<?php
+
+namespace App\Modules\Authentication\Livewire;
+
+use Livewire\Component;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Livewire\Attributes\Title;
+
+#[Title('Sign In - Metrica Polls')]
+class Login extends Component
+{
+    public $email = '';
+    public $password = '';
+    public $remember = false;
+
+    protected $rules = [
+        'email' => 'required|string|email',
+        'password' => 'required|string',
+    ];
+
+    public function login()
+    {
+        $this->validate();
+
+        $throttleKey = 'login:' . request()->ip();
+
+        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($throttleKey);
+            $this->addError('email', 'Too many login attempts. Please try again in ' . ceil($seconds / 60) . ' minutes.');
+            return;
+        }
+
+        $user = User::where('email', $this->email)->first();
+
+        if (!$user || !Hash::check($this->password, $user->password)) {
+            \Illuminate\Support\Facades\RateLimiter::hit($throttleKey, 900); // 15 mins decay
+            $this->addError('email', __('auth.failed'));
+            return;
+        }
+
+        if ($user->status === 'suspended') {
+            $this->addError('email', 'This account has been suspended by an administrator.');
+            return;
+        }
+
+        // Clear rate limit on successful credentials match
+        \Illuminate\Support\Facades\RateLimiter::clear($throttleKey);
+
+        // Generate 6-digit OTP code for secure login/2FA verification
+        $otpCode = strval(rand(100000, 999999));
+        $user->update([
+            'otp_code' => $otpCode,
+            'otp_expires_at' => now()->addMinutes(15),
+        ]);
+
+        logger("Login OTP code for user {$user->email} is: {$otpCode}");
+        session()->flash('info', "Secure login OTP generated. For demo purposes, use code: {$otpCode}");
+
+        return redirect()->route('auth.verify-otp', [
+            'email' => $user->email,
+            'remember' => $this->remember ? 1 : 0
+        ]);
+    }
+
+    public function loginWithGoogle($email, $name = 'Google User')
+    {
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            // Register as Panelist on the fly
+            $user = User::create([
+                'name' => $name,
+                'email' => $email,
+                'password' => Hash::make(rand(100000, 999999)),
+                'status' => 'active',
+            ]);
+            $user->assignRole('Panelist');
+            
+            // Create Panelist Profile
+            \App\Modules\Wallet\Models\PanelistProfile::create([
+                'user_id' => $user->id,
+                'points_balance' => 0,
+                'is_verified' => false,
+            ]);
+
+            // Send notifications
+            try {
+                $subject = \App\Models\Setting::getValue('mail_template_welcome_subject', 'Welcome to Metrica Polls Panel!');
+                $body = \App\Models\Setting::getValue('mail_template_welcome_body', '');
+                \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\CustomConfigurableMail($subject, $body, [
+                    'name' => $user->name,
+                ]));
+
+                $smsTemplate = "Welcome to Metrica Polls, {name}! Please undertake training qualification tests to unlock surveys.";
+                $smsMsg = str_replace('{name}', $user->name, $smsTemplate);
+                \App\Services\TextSmsService::send($user->phone ?? '254700000000', $smsMsg);
+            } catch (\Throwable $e) {
+                logger("Welcome notification failure: " . $e->getMessage());
+            }
+        }
+
+        if ($user->status === 'suspended') {
+            $this->addError('email', 'This account has been suspended by an administrator.');
+            return;
+        }
+
+        // Login instantly bypassing OTP
+        auth()->login($user, true);
+
+        return redirect()->route('dashboard.index');
+    }
+
+    public function render()
+    {
+        return view('Authentication::livewire.login')
+            ->layout('Corporate::layout');
+    }
+}
