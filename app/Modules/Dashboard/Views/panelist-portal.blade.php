@@ -61,6 +61,15 @@
             color: #ffffff !important; 
         }
     </style>
+    @elseif($theme === 'Light')
+    <style>
+        body { background-color: #f9fafb !important; color: #111827 !important; }
+        aside { background-color: #13254A !important; border-color: #0A58CA !important; }
+        aside a { color: #e5e7eb !important; }
+        aside a:hover, aside a.bg-gray-50 { background-color: #0A58CA !important; color: #ffffff !important; }
+        aside span { background-color: #00D2C4 !important; color: #13254A !important; }
+        header { background-color: #ffffff !important; border-color: #e5e7eb !important; }
+    </style>
     @endif
 </head>
 <body class="h-full font-sans antialiased {{ $theme === 'Dark' ? 'text-gray-100 bg-brand-navy' : ($theme === 'Glassmorphism' ? 'text-white bg-transparent' : 'text-gray-900 bg-gray-50') }}" x-data="{ mobileMenuOpen: false }">

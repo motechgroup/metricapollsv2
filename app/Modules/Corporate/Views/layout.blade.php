@@ -69,6 +69,28 @@
         header a:hover, footer a:hover { color: #ffffff !important; }
         section { background-color: transparent !important; }
     </style>
+    @elseif($theme === 'Light')
+    <style>
+        body { background-color: #ffffff !important; color: #030712 !important; }
+        header { background-color: #13254A !important; border-color: #0A58CA !important; }
+        header nav a { color: #e5e7eb !important; }
+        header nav a:hover { color: #00D2C4 !important; }
+        header .text-gray-600 { color: #e5e7eb !important; }
+        header .hover:text-gray-900:hover { color: #00D2C4 !important; }
+        header a { color: #e5e7eb !important; }
+        header a:hover { color: #00D2C4 !important; }
+        
+        footer { background-color: #13254A !important; border-color: #0A58CA !important; color: #ffffff !important; }
+        footer h3 { color: #00D2C4 !important; }
+        footer p { color: #d1d5db !important; }
+        footer a { color: #d1d5db !important; }
+        footer a:hover { color: #00D2C4 !important; }
+        footer .border-t { border-color: rgba(255, 255, 255, 0.1) !important; }
+        footer .text-gray-400 { color: #d1d5db !important; }
+        
+        .bg-brand-navy { background-color: #FFA000 !important; color: #13254A !important; font-weight: 600 !important; }
+        .bg-brand-navy:hover { background-color: #0A58CA !important; color: #ffffff !important; }
+    </style>
     @endif
 </head>
 <body class="flex flex-col min-h-full font-sans antialiased {{ $theme === 'Dark' ? 'text-gray-100 bg-brand-navy' : ($theme === 'Glassmorphism' ? 'text-white bg-transparent' : 'text-gray-950 bg-white') }}">
