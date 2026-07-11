@@ -61,6 +61,10 @@ class SettingsManagement extends Component
     public $sms_template_payout;
     public $sms_template_new_survey;
 
+    // Legal Pages properties
+    public $terms_of_service;
+    public $privacy_policy;
+
     public function mount()
     {
         // Resolve settings from Database via Setting helper
@@ -109,6 +113,10 @@ class SettingsManagement extends Component
         $this->sms_template_otp = Setting::getValue('sms_template_otp', 'Your Metrica Polls verification OTP code is {code}. Expiry in {expiry} mins.');
         $this->sms_template_payout = Setting::getValue('sms_template_payout', 'Metrica Polls: We have sent KES {amount} to your M-Pesa wallet. Ref: {ref}. Thank you for your feedback!');
         $this->sms_template_new_survey = Setting::getValue('sms_template_new_survey', "Metrica Polls: A new paid survey '{title}' paying KES {amount} is now open for your badge level! Log in to respond.");
+
+        // Legal Pages
+        $this->terms_of_service = Setting::getValue('terms_of_service', '');
+        $this->privacy_policy = Setting::getValue('privacy_policy', '');
     }
 
     public function save()
@@ -150,9 +158,14 @@ class SettingsManagement extends Component
             'mail_template_payout_body' => 'required|string',
             'mail_template_fraud_subject' => 'required|string',
             'mail_template_fraud_body' => 'required|string',
+            // SMS Templates
             'sms_template_otp' => 'required|string',
             'sms_template_payout' => 'required|string',
             'sms_template_new_survey' => 'required|string',
+
+            // Legal Pages
+            'terms_of_service' => 'required|string',
+            'privacy_policy' => 'required|string',
         ]);
 
         // Process uploaded logo
@@ -211,6 +224,10 @@ class SettingsManagement extends Component
         Setting::setValue('sms_template_otp', $this->sms_template_otp);
         Setting::setValue('sms_template_payout', $this->sms_template_payout);
         Setting::setValue('sms_template_new_survey', $this->sms_template_new_survey);
+
+        // Legal Pages
+        Setting::setValue('terms_of_service', $this->terms_of_service);
+        Setting::setValue('privacy_policy', $this->privacy_policy);
 
         session()->flash('success', 'System configurations updated successfully.');
     }

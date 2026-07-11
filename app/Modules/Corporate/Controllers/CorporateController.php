@@ -175,4 +175,16 @@ class CorporateController extends Controller
     {
         return view('Corporate::maintenance');
     }
+
+    public function terms()
+    {
+        $content = \App\Models\Setting::getValue('terms_of_service', '');
+        return view('Corporate::terms', compact('content'));
+    }
+
+    public function privacy()
+    {
+        $content = \App\Models\Setting::getValue('privacy_policy', '');
+        return view('Corporate::privacy', compact('content'));
+    }
 }

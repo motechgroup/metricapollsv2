@@ -176,8 +176,8 @@
                 <div>
                     <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Compliance & Legal</h3>
                     <ul class="mt-4 space-y-2 text-sm">
-                        <li><a href="#" class="text-gray-600 hover:text-gray-900">Privacy Policy</a></li>
-                        <li><a href="#" class="text-gray-600 hover:text-gray-900">Terms of Service</a></li>
+                        <li><a href="{{ route('corporate.privacy') }}" class="text-gray-600 hover:text-gray-900">Privacy Policy</a></li>
+                        <li><a href="{{ route('corporate.terms') }}" class="text-gray-600 hover:text-gray-900">Terms of Service</a></li>
                         <li><a href="#" class="text-gray-600 hover:text-gray-900">Data Security</a></li>
                     </ul>
                 </div>
