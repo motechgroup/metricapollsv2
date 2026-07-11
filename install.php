@@ -6,7 +6,43 @@
 
 define('LARAVEL_START', microtime(true));
 
-// 1. Check Server Requirements & Permissions
+// 1. Check if vendor/autoload.php exists
+$vendorExists = file_exists(__DIR__ . '/vendor/autoload.php');
+if (!$vendorExists) {
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Metrica Polls Installer - Dependencies Missing</title>
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f3f4f6; color: #1f2937; margin: 0; padding: 40px 20px; }
+            .card { max-width: 600px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; }
+            h1 { color: #b91c1c; font-size: 22px; margin-top: 0; }
+            p { font-size: 15px; line-height: 1.6; }
+            code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 14px; }
+            .btn { display: inline-block; background: #13254A; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: 600; margin-top: 15px; }
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <h1>Dependencies Missing (vendor/autoload.php)</h1>
+            <p>The application dependencies are not installed. Since shared hosting environments often do not allow running <code>composer install</code> directly via SSH, please follow these simple steps:</p>
+            <ol style="padding-left: 20px; font-size: 14px; line-height: 1.8; margin-bottom: 20px;">
+                <li>Run <code>composer install --no-dev --optimize-autoloader</code> locally on your development computer.</li>
+                <li>Upload the generated <code>vendor/</code> directory to your shared hosting root folder.</li>
+                <li>Refresh this page to complete the database configuration.</li>
+            </ol>
+            <a href="javascript:location.reload();" class="btn">Refresh Installer</a>
+        </div>
+    </body>
+    </html>
+    <?php
+    exit;
+}
+
+// 2. Check Server Requirements & Permissions
 $requirements = [
     'PHP >= 8.2' => PHP_VERSION_ID >= 80200,
     'BCMath Extension' => extension_loaded('bcmath'),
@@ -23,6 +59,7 @@ $requirements = [
 $writePermissions = [
     'storage/' => is_writable(__DIR__ . '/storage'),
     'bootstrap/cache/' => is_writable(__DIR__ . '/bootstrap/cache'),
+    'database/' => is_writable(__DIR__ . '/database'),
     'root directory' => is_writable(__DIR__),
 ];
 
@@ -34,7 +71,7 @@ foreach ($writePermissions as $name => $passed) {
     if (!$passed) $errors[] = "Permission failed: {$name} directory must be writable.";
 }
 
-// 2. Handle Env Submission & Installation Trigger
+// 3. Handle Env Submission & Installation Trigger
 $message = '';
 $step = 1;
 
