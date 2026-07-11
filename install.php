@@ -240,6 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($errors)) {
                     <select name="db_connection" onchange="toggleDbFields(this.value)">
                         <option value="sqlite">SQLite (Recommended for fast setup)</option>
                         <option value="mysql">MySQL / MariaDB</option>
+                        <option value="pgsql">PostgreSQL</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -272,7 +273,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($errors)) {
             </form>
             <script>
                 function toggleDbFields(val) {
-                    document.getElementById('mysql_fields').style.display = val === 'mysql' ? 'block' : 'none';
+                    const showCreds = val === 'mysql' || val === 'pgsql';
+                    document.getElementById('mysql_fields').style.display = showCreds ? 'block' : 'none';
+                    if (val === 'pgsql') {
+                        document.getElementsByName('db_port')[0].value = '5432';
+                    } else if (val === 'mysql') {
+                        document.getElementsByName('db_port')[0].value = '3306';
+                    }
                 }
             </script>
         <?php elseif ($step === 3): ?>
