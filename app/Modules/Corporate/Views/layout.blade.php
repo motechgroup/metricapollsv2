@@ -1,17 +1,77 @@
+@php
+    $theme = \App\Models\Setting::getValue('site_theme', 'Light');
+@endphp
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-white">
+<html lang="en" class="h-full {{ $theme === 'Dark' ? 'bg-brand-navy dark' : ($theme === 'Glassmorphism' ? 'bg-brand-navy' : 'bg-white') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', \App\Models\Setting::getValue('site_title', 'Metrica Polls')) - Marketing & Research Firm</title>
+    <title>@yield('title', \App\Models\Setting::getValue('site_title', 'Metrica Polls')) - Marketing &amp; Research Firm</title>
     <link rel="icon" type="image/png" href="{{ asset(\App\Models\Setting::getValue('site_favicon', 'favicon.png')) }}">
     <meta name="description" content="{{ \App\Models\Setting::getValue('site_description', '') }}">
     <meta name="keywords" content="{{ \App\Models\Setting::getValue('site_seo_keywords', '') }}">
     {!! \App\Models\Setting::getValue('analytics_code', '') !!}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    
+    @if($theme === 'Dark')
+    <style>
+        body { background-color: #13254A !important; color: #f3f4f6 !important; }
+        .bg-white { background-color: #1b2e5a !important; color: #f3f4f6 !important; border-color: #2b3f72 !important; }
+        .text-gray-900 { color: #f3f4f6 !important; }
+        .text-gray-600 { color: #d1d5db !important; }
+        .text-gray-700 { color: #e5e7eb !important; }
+        .text-gray-800 { color: #f3f4f6 !important; }
+        .text-gray-500 { color: #9ca3af !important; }
+        .border-gray-200, .border-gray-100 { border-color: #2b3f72 !important; }
+        input, select, textarea { background-color: #13254A !important; border-color: #2b3f72 !important; color: #ffffff !important; }
+        .bg-gray-50 { background-color: #13254A !important; }
+        header { background-color: #1b2e5a !important; border-color: #2b3f72 !important; }
+        footer { background-color: #13254A !important; border-color: #2b3f72 !important; }
+        header a, footer a { color: #d1d5db !important; }
+        header a:hover, footer a:hover { color: #ffffff !important; }
+        section { background-color: #13254A !important; border-color: #2b3f72 !important; }
+    </style>
+    @elseif($theme === 'Glassmorphism')
+    <style>
+        body { 
+            background: linear-gradient(135deg, #13254A 0%, #0A58CA 50%, #00D2C4 100%) !important; 
+            color: #ffffff !important;
+            background-attachment: fixed !important;
+        }
+        .bg-white { 
+            background-color: rgba(255, 255, 255, 0.08) !important; 
+            backdrop-filter: blur(12px) !important; 
+            -webkit-backdrop-filter: blur(12px) !important; 
+            border: 1px solid rgba(255, 255, 255, 0.15) !important; 
+            color: #ffffff !important; 
+        }
+        .text-gray-900, .text-gray-800, .text-gray-700 { color: #ffffff !important; }
+        .text-gray-600, .text-gray-500 { color: rgba(255, 255, 255, 0.75) !important; }
+        .border-gray-200, .border-gray-100 { border-color: rgba(255, 255, 255, 0.15) !important; }
+        input, select, textarea { 
+            background-color: rgba(0, 0, 0, 0.2) !important; 
+            border: 1px solid rgba(255, 255, 255, 0.15) !important; 
+            color: #ffffff !important; 
+        }
+        .bg-gray-50 { background-color: rgba(0, 0, 0, 0.1) !important; }
+        header { 
+            background-color: rgba(19, 37, 74, 0.6) !important; 
+            backdrop-filter: blur(16px) !important; 
+            border-color: rgba(255, 255, 255, 0.15) !important; 
+        }
+        footer { 
+            background-color: rgba(19, 37, 74, 0.8) !important; 
+            backdrop-filter: blur(16px) !important; 
+            border-color: rgba(255, 255, 255, 0.15) !important; 
+        }
+        header a, footer a { color: rgba(255, 255, 255, 0.8) !important; }
+        header a:hover, footer a:hover { color: #ffffff !important; }
+        section { background-color: transparent !important; }
+    </style>
+    @endif
 </head>
-<body class="flex flex-col min-h-full font-sans antialiased text-gray-950 bg-white">
+<body class="flex flex-col min-h-full font-sans antialiased {{ $theme === 'Dark' ? 'text-gray-100 bg-brand-navy' : ($theme === 'Glassmorphism' ? 'text-white bg-transparent' : 'text-gray-950 bg-white') }}">
     <!-- Header/Navigation -->
     <header class="border-b border-gray-100 bg-white sticky top-0 z-50">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

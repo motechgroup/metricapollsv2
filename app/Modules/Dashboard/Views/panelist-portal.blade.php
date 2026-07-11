@@ -1,14 +1,69 @@
+@php
+    $theme = \App\Models\Setting::getValue('site_theme', 'Light');
+@endphp
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-gray-50">
+<html lang="en" class="h-full {{ $theme === 'Dark' ? 'bg-brand-navy dark' : ($theme === 'Glassmorphism' ? 'bg-brand-navy' : 'bg-gray-50') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('page_title', 'Dashboard') - Metrica Panelist Portal</title>
-    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <title>@yield('page_title', 'Dashboard') - {{ \App\Models\Setting::getValue('site_title', 'Metrica Polls') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset(\App\Models\Setting::getValue('site_favicon', 'favicon.png')) }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+
+    @if($theme === 'Dark')
+    <style>
+        body { background-color: #13254A !important; color: #f3f4f6 !important; }
+        .bg-white { background-color: #1b2e5a !important; color: #f3f4f6 !important; border-color: #2b3f72 !important; }
+        .text-gray-900 { color: #f3f4f6 !important; }
+        .text-gray-600 { color: #d1d5db !important; }
+        .text-gray-700 { color: #e5e7eb !important; }
+        .text-gray-800 { color: #f3f4f6 !important; }
+        .text-gray-500 { color: #9ca3af !important; }
+        .border-gray-200, .border-gray-100 { border-color: #2b3f72 !important; }
+        input, select, textarea { background-color: #13254A !important; border-color: #2b3f72 !important; color: #ffffff !important; }
+        .bg-gray-50 { background-color: #13254A !important; }
+        aside { background-color: #1b2e5a !important; border-color: #2b3f72 !important; }
+        nav a { color: #d1d5db !important; }
+        nav a:hover, nav a.bg-gray-50 { background-color: #2b3f72 !important; color: #ffffff !important; }
+    </style>
+    @elseif($theme === 'Glassmorphism')
+    <style>
+        body { 
+            background: linear-gradient(135deg, #13254A 0%, #0A58CA 50%, #00D2C4 100%) !important; 
+            color: #ffffff !important;
+            background-attachment: fixed !important;
+        }
+        .bg-white { 
+            background-color: rgba(255, 255, 255, 0.08) !important; 
+            backdrop-filter: blur(12px) !important; 
+            -webkit-backdrop-filter: blur(12px) !important; 
+            border: 1px solid rgba(255, 255, 255, 0.15) !important; 
+            color: #ffffff !important; 
+        }
+        .text-gray-900, .text-gray-800, .text-gray-700 { color: #ffffff !important; }
+        .text-gray-600, .text-gray-500 { color: rgba(255, 255, 255, 0.75) !important; }
+        .border-gray-200, .border-gray-100 { border-color: rgba(255, 255, 255, 0.15) !important; }
+        input, select, textarea { 
+            background-color: rgba(0, 0, 0, 0.2) !important; 
+            border: 1px solid rgba(255, 255, 255, 0.15) !important; 
+            color: #ffffff !important; 
+        }
+        .bg-gray-50 { background-color: rgba(0, 0, 0, 0.1) !important; }
+        aside { 
+            background-color: rgba(19, 37, 74, 0.6) !important; 
+            backdrop-filter: blur(16px) !important; 
+            border-color: rgba(255, 255, 255, 0.15) !important; 
+        }
+        nav a { color: rgba(255, 255, 255, 0.8) !important; }
+        nav a:hover, nav a.bg-gray-50 { 
+            background-color: rgba(255, 255, 255, 0.15) !important; 
+            color: #ffffff !important; 
+        }
+    </style>
+    @endif
 </head>
-<body class="h-full font-sans antialiased text-gray-900 bg-gray-50" x-data="{ mobileMenuOpen: false }">
+<body class="h-full font-sans antialiased {{ $theme === 'Dark' ? 'text-gray-100 bg-brand-navy' : ($theme === 'Glassmorphism' ? 'text-white bg-transparent' : 'text-gray-900 bg-gray-50') }}" x-data="{ mobileMenuOpen: false }">
     <!-- Desktop Sidebar -->
     <aside class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col border-r border-gray-200 bg-white">
         <div class="flex h-16 shrink-0 items-center border-b border-gray-100 px-6">
