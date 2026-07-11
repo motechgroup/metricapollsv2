@@ -216,6 +216,11 @@ class SettingsManagement extends Component
                 'mail.from.name' => $this->mail_from_name,
             ]);
 
+            // Force Laravel to rebuild the mailer with the unsaved config values
+            if (app()->bound('mail.manager')) {
+                app()->make('mail.manager')->forgetMailers();
+            }
+
             \Illuminate\Support\Facades\Mail::to($this->testEmail)->send(
                 new \App\Mail\CustomConfigurableMail(
                     "Metrica SMTP Test Mail Connection",
