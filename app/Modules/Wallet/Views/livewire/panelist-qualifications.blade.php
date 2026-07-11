@@ -6,11 +6,6 @@
             <h1 class="text-2xl font-bold tracking-tight text-gray-900">Qualification Tests</h1>
             <p class="text-sm text-gray-500">Qualify for highly-rewarding research surveys by verifying your purchasing behaviors and lifestyle demographics.</p>
         </div>
-        @if(!$activeTestId)
-            <button type="button" wire:click="refreshTests" class="inline-flex items-center gap-2 rounded-md bg-white border border-gray-300 px-3.5 py-2 text-xs font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition">
-                🔄 Refresh Tests Pool
-            </button>
-        @endif
     </div>
 
     @if (session()->has('success'))
@@ -19,11 +14,7 @@
         </div>
     @endif
 
-    @if (session()->has('info'))
-        <div class="p-4 bg-blue-50 border border-blue-200 text-blue-700 text-sm rounded-md shadow-sm">
-            {{ session('info') }}
-        </div>
-    @endif
+
 
     @if($activeTestId)
         <!-- Active Test Wizard -->
@@ -60,13 +51,7 @@
             </div>
         </div>
     @else
-        <!-- System unpredictable alert banner -->
-        <div class="rounded-md bg-slate-50 p-4 border border-slate-200">
-            <h4 class="text-xxs font-bold text-slate-800 uppercase tracking-wider mb-1">🔐 Dynamic Anti-Predictability Protocol</h4>
-            <p class="text-xxs text-slate-600 leading-relaxed font-medium">
-                To guarantee audit integrity, qualification tests are drawn at random from a comprehensive pool of 150 verified demographic checklists. Multiple concurrent sessions receive independent subsets. Fresh batches can be loaded at any time using the <strong>Refresh Tests Pool</strong> action.
-            </p>
-        </div>
+
 
         <!-- Available Tests List -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">

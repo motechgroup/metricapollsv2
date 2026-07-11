@@ -124,11 +124,7 @@ class PanelistQualifications extends Component
         $this->answers = [];
     }
 
-    public function refreshTests()
-    {
-        $this->loadRandomTests();
-        session()->flash('info', 'Refreshed qualification tests pool.');
-    }
+
 
     public function render()
     {
