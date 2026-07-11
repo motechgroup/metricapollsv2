@@ -3,28 +3,33 @@
 <div class="space-y-8 animate-fade-in">
     <div>
         <h1 class="text-2xl font-bold tracking-tight text-gray-900">System Configurations</h1>
-        <p class="text-sm text-gray-500">Manage branding details, SEO meta definitions, Google Analytics tracking scripts, and platform maintenance triggers.</p>
+        <p class="text-sm text-gray-500">Manage branding details, SEO meta definitions, Google Analytics tracking scripts, and platform configurations independently.</p>
     </div>
 
-    @if (session()->has('success'))
-        <div class="p-4 bg-green-50 border border-green-200 text-green-700 text-sm rounded-md">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <form wire:submit.prevent="save" class="space-y-8">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left & Middle: Settings Cards -->
+        <div class="lg:col-span-2 space-y-6">
             
-            <!-- Left & Middle: Settings Cards -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Branding Card -->
-                <div class="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-6">
-                    <h2 class="text-base font-bold text-gray-900 border-b border-gray-100 pb-3">Branding & Logo Identity</h2>
-                    
+            <!-- General Settings Section (Branding, SEO, Security) -->
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm space-y-6 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 bg-gray-50">
+                    <h2 class="text-base font-bold text-gray-900">General &amp; Branding Settings</h2>
+                    <p class="text-xs text-gray-500 mt-1">Configure your corporate identity, favicon, custom footer, UI theme modes, and support details.</p>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    @if (session()->has('success_general'))
+                        <div class="p-3 bg-green-50 border border-green-200 text-green-700 text-xs rounded-md">
+                            {{ session('success_general') }}
+                        </div>
+                    @endif
+
+                    <!-- Branding fields -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div class="sm:col-span-2">
                             <label for="site_title" class="block text-sm font-medium text-gray-700">Platform Title</label>
-                            <input wire:model="site_title" type="text" id="site_title" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
+                            <input wire:model="site_title" type="text" id="site_title" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
                             @error('site_title') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
@@ -62,23 +67,17 @@
 
                         <div class="sm:col-span-2">
                             <label for="site_description" class="block text-sm font-medium text-gray-700">Meta Site Description</label>
-                            <textarea wire:model="site_description" id="site_description" rows="3" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white"></textarea>
+                            <textarea wire:model="site_description" id="site_description" rows="3" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white"></textarea>
                             @error('site_description') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="sm:col-span-2">
                             <label for="site_footer" class="block text-sm font-medium text-gray-700">Footer Attribution Text</label>
-                            <input wire:model="site_footer" type="text" id="site_footer" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
+                            <input wire:model="site_footer" type="text" id="site_footer" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
                             @error('site_footer') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
-                    </div>
-                </div>
 
-                <!-- SEO, Theme & Scripts -->
-                <div class="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-6">
-                    <h2 class="text-base font-bold text-gray-900 border-b border-gray-100 pb-3">SEO, Theme & Marketing Integrations</h2>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- SEO, Theme & Scripts -->
                         <div>
                             <label for="site_theme" class="block text-sm font-medium text-gray-700">UI Application Theme</label>
                             <select wire:model="site_theme" id="site_theme" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
@@ -109,29 +108,23 @@
                             <textarea wire:model="analytics_code" id="analytics_code" rows="3" placeholder="<!-- Google Analytics code -->" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-xs font-mono focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white"></textarea>
                             @error('analytics_code') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
-                    </div>
-                </div>
 
-                <!-- Original Configs Card (Compatibility) -->
-                <div class="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-6">
-                    <h2 class="text-base font-bold text-gray-900 border-b border-gray-100 pb-3">Security & Support Configurations</h2>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Security & Support fields -->
                         <div>
                             <label for="support_email" class="block text-sm font-medium text-gray-700">Support Email Address</label>
-                            <input wire:model="support_email" type="email" id="support_email" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
+                            <input wire:model="support_email" type="email" id="support_email" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
                             @error('support_email') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
                             <label for="otp_expiry" class="block text-sm font-medium text-gray-700">OTP Expiry (Minutes)</label>
-                            <input wire:model="otp_expiry" type="number" id="otp_expiry" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
+                            <input wire:model="otp_expiry" type="number" id="otp_expiry" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
                             @error('otp_expiry') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
                             <label for="rate_limit_login" class="block text-sm font-medium text-gray-700">Login Rate Limit (Attempts / Minute)</label>
-                            <input wire:model="rate_limit_login" type="number" id="rate_limit_login" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
+                            <input wire:model="rate_limit_login" type="number" id="rate_limit_login" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
                             @error('rate_limit_login') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
@@ -146,9 +139,27 @@
                     </div>
                 </div>
 
-                <!-- SMTP Server Configurations -->
-                <div class="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-6 animate-fade-in">
-                    <h2 class="text-base font-bold text-gray-900 border-b border-gray-100 pb-3">SMTP Mail Server Settings</h2>
+                <div class="p-6 border-t border-gray-100 bg-gray-50 flex justify-end">
+                    <button type="button" wire:click="saveGeneral" class="inline-flex justify-center items-center rounded-md bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 transition">
+                        Save General Settings
+                    </button>
+                </div>
+            </div>
+
+            <!-- SMTP Mail Configurations -->
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm space-y-6 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 bg-gray-50">
+                    <h2 class="text-base font-bold text-gray-900">SMTP Mail Server Settings</h2>
+                    <p class="text-xs text-gray-500 mt-1">Configure your SMTP hosts, connection credentials, and run instant mail dispatch tests.</p>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    @if (session()->has('success_smtp'))
+                        <div class="p-3 bg-green-50 border border-green-200 text-green-700 text-xs rounded-md">
+                            {{ session('success_smtp') }}
+                        </div>
+                    @endif
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">SMTP Host</label>
@@ -190,11 +201,51 @@
                             @error('mail_from_address') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
                     </div>
+
+                    <!-- SMTP Mail Testing Interface -->
+                    <div class="border-t border-gray-150 pt-6 space-y-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500">SMTP Connection Tester</h3>
+                        <p class="text-xxs text-gray-400 leading-relaxed">Enter a test recipient email address below to verify your SMTP parameters. The system will dynamically test using the parameters filled above.</p>
+                        
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <div class="flex-grow">
+                                <input wire:model="testEmail" type="email" placeholder="test-recipient@metricapolls.com" class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm bg-white focus:border-gray-900 focus:outline-none">
+                                @error('testEmail') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <button type="button" wire:click="sendTestMail" class="inline-flex items-center justify-center rounded-md bg-gray-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-550 transition whitespace-nowrap">
+                                Send Test Email
+                            </button>
+                        </div>
+
+                        @if (session()->has('success_test_mail'))
+                            <div class="p-3 bg-green-50 border border-green-200 text-green-700 text-xs rounded-md">
+                                {{ session('success_test_mail') }}
+                            </div>
+                        @endif
+                    </div>
                 </div>
 
-                <!-- TextSMS Gateway Configurations -->
-                <div class="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-6 animate-fade-in">
-                    <h2 class="text-base font-bold text-gray-900 border-b border-gray-100 pb-3">TextSMS.co.ke Gateway Settings</h2>
+                <div class="p-6 border-t border-gray-100 bg-gray-50 flex justify-end">
+                    <button type="button" wire:click="saveSmtp" class="inline-flex justify-center items-center rounded-md bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 transition">
+                        Save SMTP Credentials
+                    </button>
+                </div>
+            </div>
+
+            <!-- TextSMS Gateway Configurations -->
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm space-y-6 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 bg-gray-50">
+                    <h2 class="text-base font-bold text-gray-900">TextSMS.co.ke Gateway Settings</h2>
+                    <p class="text-xs text-gray-500 mt-1">Configure your TextSMS Partner IDs, shortcode Sender IDs, and API keys for system alert messages.</p>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    @if (session()->has('success_sms'))
+                        <div class="p-3 bg-green-50 border border-green-200 text-green-700 text-xs rounded-md">
+                            {{ session('success_sms') }}
+                        </div>
+                    @endif
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div class="sm:col-span-2">
                             <label class="block text-sm font-medium text-gray-700">Gateway API URL</label>
@@ -219,10 +270,27 @@
                     </div>
                 </div>
 
-                <!-- Custom Communication Templates -->
-                <div class="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-6 animate-fade-in">
-                    <h2 class="text-base font-bold text-gray-900 border-b border-gray-100 pb-3">Notification &amp; Alert Templates</h2>
-                    
+                <div class="p-6 border-t border-gray-100 bg-gray-50 flex justify-end">
+                    <button type="button" wire:click="saveSms" class="inline-flex justify-center items-center rounded-md bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 transition">
+                        Save SMS Gateway
+                    </button>
+                </div>
+            </div>
+
+            <!-- Custom Communication Templates -->
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm space-y-6 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 bg-gray-50">
+                    <h2 class="text-base font-bold text-gray-900">Notification &amp; Alert Templates</h2>
+                    <p class="text-xs text-gray-500 mt-1">Configure default email subjects, bodies, and gateway SMS notifications dispatched for system triggers.</p>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    @if (session()->has('success_templates'))
+                        <div class="p-3 bg-green-50 border border-green-200 text-green-700 text-xs rounded-md">
+                            {{ session('success_templates') }}
+                        </div>
+                    @endif
+
                     <div class="space-y-6 divide-y divide-gray-100">
                         <!-- Welcome Email -->
                         <div class="pt-4 first:pt-0 space-y-4">
@@ -230,10 +298,12 @@
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-400">Subject Line</label>
                                 <input wire:model="mail_template_welcome_subject" type="text" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm bg-white focus:border-gray-900 focus:outline-none">
+                                @error('mail_template_welcome_subject') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                             </div>
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-400">Body Content (HTML Allowed, placeholders: {name})</label>
                                 <textarea wire:model="mail_template_welcome_body" rows="4" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-xs font-mono bg-white focus:border-gray-900 focus:outline-none"></textarea>
+                                @error('mail_template_welcome_body') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                             </div>
                         </div>
 
@@ -243,10 +313,12 @@
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-400">Subject Line</label>
                                 <input wire:model="mail_template_payout_subject" type="text" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm bg-white focus:border-gray-900 focus:outline-none">
+                                @error('mail_template_payout_subject') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                             </div>
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-400">Body Content (HTML, placeholders: {name}, {amount}, {phone}, {transaction_id})</label>
                                 <textarea wire:model="mail_template_payout_body" rows="4" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-xs font-mono bg-white focus:border-gray-900 focus:outline-none"></textarea>
+                                @error('mail_template_payout_body') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                             </div>
                         </div>
 
@@ -256,10 +328,12 @@
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-400">Subject Line</label>
                                 <input wire:model="mail_template_fraud_subject" type="text" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm bg-white focus:border-gray-900 focus:outline-none">
+                                @error('mail_template_fraud_subject') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                             </div>
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-400">Body Content (HTML, placeholders: {name}, {survey}, {reason})</label>
                                 <textarea wire:model="mail_template_fraud_body" rows="4" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-xs font-mono bg-white focus:border-gray-900 focus:outline-none"></textarea>
+                                @error('mail_template_fraud_body') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                             </div>
                         </div>
 
@@ -270,23 +344,44 @@
                                 <div>
                                     <label class="block text-xs font-bold uppercase tracking-wider text-gray-400">OTP Code Verification SMS (placeholders: {code}, {expiry})</label>
                                     <textarea wire:model="sms_template_otp" rows="2" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-xs bg-white focus:border-gray-900 focus:outline-none"></textarea>
+                                    @error('sms_template_otp') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold uppercase tracking-wider text-gray-400">M-Pesa Payout SMS Alert (placeholders: {amount}, {ref})</label>
                                     <textarea wire:model="sms_template_payout" rows="2" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-xs bg-white focus:border-gray-900 focus:outline-none"></textarea>
+                                    @error('sms_template_payout') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold uppercase tracking-wider text-gray-400">New Campaign Alert SMS (placeholders: {title}, {amount})</label>
                                     <textarea wire:model="sms_template_new_survey" rows="2" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-xs bg-white focus:border-gray-900 focus:outline-none"></textarea>
+                                    @error('sms_template_new_survey') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Legal & Regulatory Pages -->
-                <div class="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-6 animate-fade-in">
-                    <h2 class="text-base font-bold text-gray-900 border-b border-gray-100 pb-3">Legal &amp; Regulatory Pages</h2>
+                <div class="p-6 border-t border-gray-100 bg-gray-50 flex justify-end">
+                    <button type="button" wire:click="saveTemplates" class="inline-flex justify-center items-center rounded-md bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 transition">
+                        Save Communication Templates
+                    </button>
+                </div>
+            </div>
+
+            <!-- Legal & Regulatory Pages -->
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm space-y-6 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 bg-gray-50">
+                    <h2 class="text-base font-bold text-gray-900">Legal &amp; Regulatory Pages</h2>
+                    <p class="text-xs text-gray-500 mt-1">Update regulatory policies, GDPR declarations, and researcher code of conduct items.</p>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    @if (session()->has('success_legal'))
+                        <div class="p-3 bg-green-50 border border-green-200 text-green-700 text-xs rounded-md">
+                            {{ session('success_legal') }}
+                        </div>
+                    @endif
+
                     <div class="space-y-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Terms of Service Document (HTML Allowed)</label>
@@ -300,22 +395,22 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Right Column: Info & Action -->
-            <div class="space-y-6">
-                <div class="bg-gray-900 border border-gray-950 p-6 rounded-lg shadow-lg text-white space-y-4">
-                    <h3 class="text-sm font-bold uppercase tracking-wider">Enterprise Configurations</h3>
-                    <p class="text-xs text-gray-300 leading-relaxed">Adjusting these parameters will update global configurations instantly across all public and internal workspaces, including Government and NGO portals.</p>
-                </div>
-
-                <div class="bg-white border border-gray-200 p-6 rounded-lg shadow-sm">
-                    <button type="submit" class="w-full inline-flex justify-center items-center rounded-md bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 transition">
-                        Save Configurations
+                <div class="p-6 border-t border-gray-100 bg-gray-50 flex justify-end">
+                    <button type="button" wire:click="saveLegal" class="inline-flex justify-center items-center rounded-md bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 transition">
+                        Save Legal Documents
                     </button>
                 </div>
             </div>
-
         </div>
-    </form>
+
+        <!-- Right Column: Info Panel -->
+        <div class="space-y-6">
+            <div class="bg-gray-900 border border-gray-950 p-6 rounded-lg shadow-lg text-white space-y-4">
+                <h3 class="text-sm font-bold uppercase tracking-wider">Independent Modules</h3>
+                <p class="text-xs text-gray-300 leading-relaxed font-sans">Each configuration module is now completely isolated. You can update and save your SMTP server credentials without filling in the rest of the site properties, descriptions, or templates.</p>
+            </div>
+        </div>
+
+    </div>
 </div>

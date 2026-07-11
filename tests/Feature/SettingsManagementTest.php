@@ -70,4 +70,50 @@ class SettingsManagementTest extends TestCase
         $admin = User::where('email', 'admin@metricapolls.com')->first();
         $this->actingAs($admin)->get(route('corporate.index'))->assertStatus(200);
     }
+
+    /**
+     * Test saving SMTP settings independently.
+     */
+    public function test_admin_can_save_smtp_independently(): void
+    {
+        $admin = User::where('email', 'admin@metricapolls.com')->first();
+        $this->actingAs($admin);
+
+        \Livewire\Livewire::test(\App\Modules\Dashboard\Livewire\SettingsManagement::class)
+            ->set('mail_host', 'mail.smtp.com')
+            ->set('mail_port', 587)
+            ->set('mail_encryption', 'tls')
+            ->set('mail_from_address', 'test@metricapolls.com')
+            ->set('mail_from_name', 'Metrica Test')
+            ->call('saveSmtp')
+            ->assertHasNoErrors()
+            ->assertSee('SMTP credentials saved successfully.');
+
+        $this->assertEquals('mail.smtp.com', Setting::getValue('mail_host'));
+        $this->assertEquals('587', Setting::getValue('mail_port'));
+    }
+
+    /**
+     * Test sending dynamic SMTP test emails.
+     */
+    public function test_admin_can_send_test_mail(): void
+    {
+        $admin = User::where('email', 'admin@metricapolls.com')->first();
+        $this->actingAs($admin);
+
+        \Illuminate\Support\Facades\Mail::fake();
+
+        \Livewire\Livewire::test(\App\Modules\Dashboard\Livewire\SettingsManagement::class)
+            ->set('mail_host', 'mail.smtp.com')
+            ->set('mail_port', 587)
+            ->set('mail_encryption', 'tls')
+            ->set('mail_from_address', 'test@metricapolls.com')
+            ->set('mail_from_name', 'Metrica Test')
+            ->set('testEmail', 'recipient@gmail.com')
+            ->call('sendTestMail')
+            ->assertHasNoErrors()
+            ->assertSee('Test email sent successfully to');
+
+        \Illuminate\Support\Facades\Mail::assertSent(\App\Mail\CustomConfigurableMail::class);
+    }
 }

@@ -65,6 +65,9 @@ class SettingsManagement extends Component
     public $terms_of_service;
     public $privacy_policy;
 
+    // Test Mail properties
+    public $testEmail = '';
+
     public function mount()
     {
         // Resolve settings from Database via Setting helper
@@ -119,7 +122,7 @@ class SettingsManagement extends Component
         $this->privacy_policy = Setting::getValue('privacy_policy', '');
     }
 
-    public function save()
+    public function saveGeneral()
     {
         $this->validate([
             'site_title' => 'required|string|max:255',
@@ -135,37 +138,6 @@ class SettingsManagement extends Component
             'analytics_code' => 'nullable|string',
             'site_logo' => 'nullable|image|max:1024', // max 1MB
             'site_favicon' => 'nullable|image|max:512', // max 512KB
-
-            // SMTP
-            'mail_host' => 'required|string',
-            'mail_port' => 'required|integer',
-            'mail_username' => 'nullable|string',
-            'mail_password' => 'nullable|string',
-            'mail_encryption' => 'required|string',
-            'mail_from_address' => 'required|email',
-            'mail_from_name' => 'required|string',
-
-            // TextSMS
-            'sms_gateway_url' => 'required|url',
-            'sms_api_key' => 'nullable|string',
-            'sms_partner_id' => 'nullable|string',
-            'sms_sender_id' => 'required|string',
-
-            // Templates
-            'mail_template_welcome_subject' => 'required|string',
-            'mail_template_welcome_body' => 'required|string',
-            'mail_template_payout_subject' => 'required|string',
-            'mail_template_payout_body' => 'required|string',
-            'mail_template_fraud_subject' => 'required|string',
-            'mail_template_fraud_body' => 'required|string',
-            // SMS Templates
-            'sms_template_otp' => 'required|string',
-            'sms_template_payout' => 'required|string',
-            'sms_template_new_survey' => 'required|string',
-
-            // Legal Pages
-            'terms_of_service' => 'required|string',
-            'privacy_policy' => 'required|string',
         ]);
 
         // Process uploaded logo
@@ -184,7 +156,6 @@ class SettingsManagement extends Component
             Setting::setValue('site_favicon', $this->faviconPath);
         }
 
-        // Save all string and boolean configs to settings table
         Setting::setValue('site_title', $this->site_title);
         Setting::setValue('support_email', $this->support_email);
         Setting::setValue('otp_expiry', (string) $this->otp_expiry);
@@ -197,7 +168,21 @@ class SettingsManagement extends Component
         Setting::setValue('site_seo_keywords', $this->site_seo_keywords ?? '');
         Setting::setValue('analytics_code', $this->analytics_code ?? '');
 
-        // SMTP
+        session()->flash('success_general', 'General settings saved successfully.');
+    }
+
+    public function saveSmtp()
+    {
+        $this->validate([
+            'mail_host' => 'required|string',
+            'mail_port' => 'required|integer',
+            'mail_username' => 'nullable|string',
+            'mail_password' => 'nullable|string',
+            'mail_encryption' => 'required|string',
+            'mail_from_address' => 'required|email',
+            'mail_from_name' => 'required|string',
+        ]);
+
         Setting::setValue('mail_host', $this->mail_host);
         Setting::setValue('mail_port', (string) $this->mail_port);
         Setting::setValue('mail_username', $this->mail_username ?? '');
@@ -206,13 +191,75 @@ class SettingsManagement extends Component
         Setting::setValue('mail_from_address', $this->mail_from_address);
         Setting::setValue('mail_from_name', $this->mail_from_name);
 
-        // TextSMS
+        session()->flash('success_smtp', 'SMTP credentials saved successfully.');
+    }
+
+    public function sendTestMail()
+    {
+        $this->validate([
+            'testEmail' => 'required|email',
+            'mail_host' => 'required|string',
+            'mail_port' => 'required|integer',
+            'mail_encryption' => 'required|string',
+            'mail_from_address' => 'required|email',
+            'mail_from_name' => 'required|string',
+        ]);
+
+        try {
+            config([
+                'mail.mailers.smtp.host' => $this->mail_host,
+                'mail.mailers.smtp.port' => $this->mail_port,
+                'mail.mailers.smtp.username' => $this->mail_username,
+                'mail.mailers.smtp.password' => $this->mail_password,
+                'mail.mailers.smtp.encryption' => $this->mail_encryption,
+                'mail.from.address' => $this->mail_from_address,
+                'mail.from.name' => $this->mail_from_name,
+            ]);
+
+            \Illuminate\Support\Facades\Mail::to($this->testEmail)->send(
+                new \App\Mail\CustomConfigurableMail(
+                    "Metrica SMTP Test Mail Connection",
+                    "Metrica Polls: This is a test email confirming that your SMTP connection settings are correctly configured on your live site!"
+                )
+            );
+
+            session()->flash('success_test_mail', 'Test email sent successfully to ' . $this->testEmail . '!');
+        } catch (\Throwable $e) {
+            $this->addError('testEmail', 'SMTP Connection Failed: ' . $e->getMessage());
+        }
+    }
+
+    public function saveSms()
+    {
+        $this->validate([
+            'sms_gateway_url' => 'required|url',
+            'sms_api_key' => 'nullable|string',
+            'sms_partner_id' => 'nullable|string',
+            'sms_sender_id' => 'required|string',
+        ]);
+
         Setting::setValue('sms_gateway_url', $this->sms_gateway_url);
         Setting::setValue('sms_api_key', $this->sms_api_key ?? '');
         Setting::setValue('sms_partner_id', $this->sms_partner_id ?? '');
         Setting::setValue('sms_sender_id', $this->sms_sender_id);
 
-        // Mail Templates
+        session()->flash('success_sms', 'TextSMS configurations saved successfully.');
+    }
+
+    public function saveTemplates()
+    {
+        $this->validate([
+            'mail_template_welcome_subject' => 'required|string',
+            'mail_template_welcome_body' => 'required|string',
+            'mail_template_payout_subject' => 'required|string',
+            'mail_template_payout_body' => 'required|string',
+            'mail_template_fraud_subject' => 'required|string',
+            'mail_template_fraud_body' => 'required|string',
+            'sms_template_otp' => 'required|string',
+            'sms_template_payout' => 'required|string',
+            'sms_template_new_survey' => 'required|string',
+        ]);
+
         Setting::setValue('mail_template_welcome_subject', $this->mail_template_welcome_subject);
         Setting::setValue('mail_template_welcome_body', $this->mail_template_welcome_body);
         Setting::setValue('mail_template_payout_subject', $this->mail_template_payout_subject);
@@ -220,16 +267,24 @@ class SettingsManagement extends Component
         Setting::setValue('mail_template_fraud_subject', $this->mail_template_fraud_subject);
         Setting::setValue('mail_template_fraud_body', $this->mail_template_fraud_body);
 
-        // SMS Templates
         Setting::setValue('sms_template_otp', $this->sms_template_otp);
         Setting::setValue('sms_template_payout', $this->sms_template_payout);
         Setting::setValue('sms_template_new_survey', $this->sms_template_new_survey);
 
-        // Legal Pages
+        session()->flash('success_templates', 'Communication templates saved successfully.');
+    }
+
+    public function saveLegal()
+    {
+        $this->validate([
+            'terms_of_service' => 'required|string',
+            'privacy_policy' => 'required|string',
+        ]);
+
         Setting::setValue('terms_of_service', $this->terms_of_service);
         Setting::setValue('privacy_policy', $this->privacy_policy);
 
-        session()->flash('success', 'System configurations updated successfully.');
+        session()->flash('success_legal', 'Legal pages updated successfully.');
     }
 
     public function render()
