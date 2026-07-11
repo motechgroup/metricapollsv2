@@ -206,6 +206,10 @@ class SettingsManagement extends Component
         ]);
 
         try {
+            // Clear broken OpenSSL cafile paths dynamically to prevent stream boot crashes
+            @ini_set('openssl.cafile', '');
+            @ini_set('openssl.capath', '');
+
             config([
                 'mail.default' => 'smtp',
                 'mail.mailers.smtp.host' => $this->mail_host,
