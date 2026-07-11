@@ -38,8 +38,8 @@
                             <label class="block text-sm font-medium text-gray-700">Site Logo</label>
                             <div class="flex items-center gap-4">
                                 <div class="h-10 w-32 border border-gray-200 rounded flex items-center justify-center bg-gray-50 overflow-hidden">
-                                    @if ($site_logo && method_exists($site_logo, 'temporaryUrl') && !empty($site_logo->getClientOriginalExtension()) && in_array(strtolower($site_logo->getClientOriginalExtension()), ['png', 'jpg', 'jpeg', 'gif', 'webp', 'ico', 'svg']))
-                                        <img src="{{ $site_logo->temporaryUrl() }}" class="h-8 object-contain">
+                                    @if ($site_logo && $logoTemp = $this->getTemporaryUrl($site_logo))
+                                        <img src="{{ $logoTemp }}" class="h-8 object-contain">
                                     @else
                                         <img src="{{ asset($logoPath) }}" class="h-8 object-contain" onerror="this.onerror=null; this.src='/favicon.png';">
                                     @endif
@@ -54,8 +54,8 @@
                             <label class="block text-sm font-medium text-gray-700">Favicon</label>
                             <div class="flex items-center gap-4">
                                 <div class="h-10 w-10 border border-gray-200 rounded flex items-center justify-center bg-gray-50 overflow-hidden">
-                                    @if ($site_favicon && method_exists($site_favicon, 'temporaryUrl') && !empty($site_favicon->getClientOriginalExtension()) && in_array(strtolower($site_favicon->getClientOriginalExtension()), ['png', 'jpg', 'jpeg', 'gif', 'webp', 'ico', 'svg']))
-                                        <img src="{{ $site_favicon->temporaryUrl() }}" class="h-6 w-6 object-contain">
+                                    @if ($site_favicon && $favTemp = $this->getTemporaryUrl($site_favicon))
+                                        <img src="{{ $favTemp }}" class="h-6 w-6 object-contain">
                                     @else
                                         <img src="{{ asset($faviconPath) }}" class="h-6 w-6 object-contain" onerror="this.onerror=null; this.src='/favicon.png';">
                                     @endif
@@ -70,8 +70,8 @@
                             <label class="block text-sm font-medium text-gray-700">Hero Background Image</label>
                             <div class="flex items-center gap-4">
                                 <div class="h-16 w-32 border border-gray-200 rounded flex items-center justify-center bg-gray-50 overflow-hidden relative">
-                                    @if ($hero_background_image && method_exists($hero_background_image, 'temporaryUrl') && !empty($hero_background_image->getClientOriginalExtension()) && in_array(strtolower($hero_background_image->getClientOriginalExtension()), ['png', 'jpg', 'jpeg', 'gif', 'webp', 'ico', 'svg']))
-                                        <img src="{{ $hero_background_image->temporaryUrl() }}" class="w-full h-full object-cover">
+                                    @if ($hero_background_image && $heroTemp = $this->getTemporaryUrl($hero_background_image))
+                                        <img src="{{ $heroTemp }}" class="w-full h-full object-cover">
                                     @else
                                         <img src="{{ asset($heroBgPath) }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/images/hero_data_analytics.png';">
                                     @endif

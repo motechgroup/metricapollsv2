@@ -378,6 +378,27 @@ class SettingsManagement extends Component
         session()->flash('success_google_login', 'Google API OAuth settings saved successfully.');
     }
 
+    public function getTemporaryUrl($file)
+    {
+        if (!$file) {
+            return null;
+        }
+
+        try {
+            // Force verify previewability to prevent Livewire from raising exceptions internally
+            if (method_exists($file, 'temporaryUrl') && method_exists($file, 'isPreviewable') && $file->isPreviewable()) {
+                return $file->temporaryUrl();
+            }
+            if (method_exists($file, 'temporaryUrl')) {
+                return $file->temporaryUrl();
+            }
+        } catch (\Throwable $e) {
+            // Silently fall back to default assets if invalid temporary files are uploaded
+        }
+
+        return null;
+    }
+
     public function render()
     {
         return view('Dashboard::livewire.settings-management')
