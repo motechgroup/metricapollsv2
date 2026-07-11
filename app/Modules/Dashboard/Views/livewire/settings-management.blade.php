@@ -97,6 +97,17 @@
                             @error('maintenance_mode') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
+                        <div>
+                            <label for="site_login_type" class="block text-sm font-medium text-gray-700">Panelist Sign In / Signup Method</label>
+                            <select wire:model="site_login_type" id="site_login_type" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
+                                <option value="All">All Methods Enabled (Google, Email, SMS)</option>
+                                <option value="Google">Google Account SSO Only</option>
+                                <option value="Email">Email &amp; Password Form Only</option>
+                                <option value="SMS">Phone Number &amp; SMS OTP Only</option>
+                            </select>
+                            @error('site_login_type') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+
                         <div class="sm:col-span-2">
                             <label for="site_seo_keywords" class="block text-sm font-medium text-gray-700">SEO Keywords (Comma separated)</label>
                             <input wire:model="site_seo_keywords" type="text" id="site_seo_keywords" placeholder="market research, public opinion, parastatal audits" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">

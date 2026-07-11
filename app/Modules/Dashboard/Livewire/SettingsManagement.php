@@ -22,6 +22,7 @@ class SettingsManagement extends Component
     public $maintenance_mode = false;
     public $site_seo_keywords;
     public $analytics_code;
+    public $site_login_type = 'All';
 
     // Original properties (compatibility)
     public $support_email;
@@ -78,6 +79,7 @@ class SettingsManagement extends Component
         $this->maintenance_mode = Setting::getValue('maintenance_mode', '0') === '1';
         $this->site_seo_keywords = Setting::getValue('site_seo_keywords', '');
         $this->analytics_code = Setting::getValue('analytics_code', '');
+        $this->site_login_type = Setting::getValue('site_login_type', 'All');
 
         // Original properties (compatibility)
         $this->support_email = Setting::getValue('support_email', 'support@metricapolls.com');
@@ -138,6 +140,7 @@ class SettingsManagement extends Component
             'analytics_code' => 'nullable|string',
             'site_logo' => 'nullable|image|max:1024', // max 1MB
             'site_favicon' => 'nullable|image|max:512', // max 512KB
+            'site_login_type' => 'required|string|in:Google,Email,SMS,All',
         ]);
 
         // Process uploaded logo
@@ -167,6 +170,7 @@ class SettingsManagement extends Component
         Setting::setValue('maintenance_mode', $this->maintenance_mode ? '1' : '0');
         Setting::setValue('site_seo_keywords', $this->site_seo_keywords ?? '');
         Setting::setValue('analytics_code', $this->analytics_code ?? '');
+        Setting::setValue('site_login_type', $this->site_login_type);
 
         session()->flash('success_general', 'General settings saved successfully.');
     }

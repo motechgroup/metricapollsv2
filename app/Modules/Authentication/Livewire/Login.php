@@ -14,6 +14,8 @@ class Login extends Component
     public $password = '';
     public $remember = false;
     public $isAdminLogin = false;
+    public $siteLoginType = 'All';
+    public $phone = '';
 
     protected $rules = [
         'email' => 'required|string|email',
@@ -25,10 +27,23 @@ class Login extends Component
         if (request()->routeIs('admin.login') || request()->is('admin/login') || request()->is('admin/login/*')) {
             $this->isAdminLogin = true;
         }
+        $this->siteLoginType = \App\Models\Setting::getValue('site_login_type', 'All');
     }
 
     public function login()
     {
+        // Enforce active login type settings for public portal
+        if (!$this->isAdminLogin) {
+            if ($this->siteLoginType === 'Google') {
+                $this->addError('email', 'Email login is currently disabled. Please use Google Sign In.');
+                return;
+            }
+            if ($this->siteLoginType === 'SMS') {
+                $this->addError('email', 'Email login is currently disabled. Please use SMS OTP Sign In.');
+                return;
+            }
+        }
+
         $this->validate();
 
         $throttleKey = 'login:' . request()->ip();
@@ -66,8 +81,8 @@ class Login extends Component
             return;
         }
 
-        // Regular login route: force Google login for panelists
-        if ($user->hasRole('Panelist')) {
+        // Regular login route: force Google login for panelists (if setting is All, let staff bypass)
+        if ($user->hasRole('Panelist') && $this->siteLoginType !== 'Email' && $this->siteLoginType !== 'All') {
             $this->addError('email', 'Please sign in using the "Continue with Google" button.');
             return;
         }
@@ -80,6 +95,62 @@ class Login extends Component
         ]);
 
         logger("Login OTP code for user {$user->email} is: {$otpCode}");
+        session()->flash('info', "Secure login OTP generated. For demo purposes, use code: {$otpCode}");
+
+        return redirect()->route('auth.verify-otp', [
+            'email' => $user->email,
+            'remember' => $this->remember ? 1 : 0
+        ]);
+    }
+
+    public function loginWithPhone()
+    {
+        $this->validate(['phone' => 'required|string']);
+
+        // Check if SMS login is enabled
+        if (!$this->isAdminLogin && $this->siteLoginType !== 'SMS' && $this->siteLoginType !== 'All') {
+            $this->addError('phone', 'SMS OTP sign in is currently disabled.');
+            return;
+        }
+
+        $throttleKey = 'login-phone:' . request()->ip();
+
+        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($throttleKey);
+            $this->addError('phone', 'Too many attempts. Please try again in ' . ceil($seconds / 60) . ' minutes.');
+            return;
+        }
+
+        $user = User::where('phone', $this->phone)->first();
+
+        if (!$user) {
+            \Illuminate\Support\Facades\RateLimiter::hit($throttleKey, 900);
+            $this->addError('phone', 'No registered account found with this phone number.');
+            return;
+        }
+
+        if ($user->status === 'suspended') {
+            $this->addError('phone', 'This account has been suspended by an administrator.');
+            return;
+        }
+
+        \Illuminate\Support\Facades\RateLimiter::clear($throttleKey);
+
+        // Generate 6-digit OTP code for secure login/2FA verification
+        $otpCode = strval(rand(100000, 999999));
+        $user->update([
+            'otp_code' => $otpCode,
+            'otp_expires_at' => now()->addMinutes(15),
+        ]);
+
+        try {
+            $smsMsg = "Your Metrica Polls verification code is: {$otpCode}. Expires in 15 minutes.";
+            \App\Services\TextSmsService::send($user->phone, $smsMsg);
+        } catch (\Throwable $e) {
+            logger("SMS dispatch failure: " . $e->getMessage());
+        }
+
+        logger("Phone login OTP code for user {$user->phone} is: {$otpCode}");
         session()->flash('info', "Secure login OTP generated. For demo purposes, use code: {$otpCode}");
 
         return redirect()->route('auth.verify-otp', [

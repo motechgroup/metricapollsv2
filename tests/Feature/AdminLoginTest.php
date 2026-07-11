@@ -62,4 +62,42 @@ class AdminLoginTest extends TestCase
 
         $this->assertGuest();
     }
+
+    public function test_user_can_login_with_phone_when_sms_enabled()
+    {
+        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+        \App\Models\Setting::setValue('site_login_type', 'SMS');
+
+        $user = User::create([
+            'name' => 'Phone User',
+            'email' => 'phoneuser@gmail.com',
+            'phone' => '+254711223344',
+            'password' => bcrypt('password123'),
+        ]);
+        $user->assignRole('Panelist');
+
+        Livewire::test(Login::class)
+            ->set('phone', '+254711223344')
+            ->call('loginWithPhone')
+            ->assertRedirect(route('auth.verify-otp', ['email' => 'phoneuser@gmail.com', 'remember' => 0]));
+    }
+
+    public function test_email_login_is_rejected_when_google_only_enabled()
+    {
+        $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
+        \App\Models\Setting::setValue('site_login_type', 'Google');
+
+        $user = User::create([
+            'name' => 'Email User',
+            'email' => 'emailuser@gmail.com',
+            'password' => bcrypt('password123'),
+        ]);
+        $user->assignRole('Panelist');
+
+        Livewire::test(Login::class)
+            ->set('email', 'emailuser@gmail.com')
+            ->set('password', 'password123')
+            ->call('login')
+            ->assertHasErrors(['email']);
+    }
 }
