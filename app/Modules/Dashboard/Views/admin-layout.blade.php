@@ -118,7 +118,7 @@
                         @endrole
                         @role('Super Admin|Admin|Project Manager')
                         <li>
-                            <a href="{{ route('admin.polls.create') }}" class="{{ request()->routeIs('admin.polls.create') ? 'bg-gray-50 text-gray-900 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6">
+                            <a href="{{ route('admin.polls.index') }}" class="{{ (request()->routeIs('admin.polls.index') || request()->routeIs('admin.polls.create')) ? 'bg-gray-50 text-gray-900 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6">
                                 AI Poll Builder
                             </a>
                         </li>
@@ -211,7 +211,7 @@
                                 @endrole
                                 @role('Super Admin|Admin|Project Manager')
                                 <li>
-                                    <a href="{{ route('admin.polls.create') }}" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex gap-x-3 rounded-md p-2 text-sm leading-6">
+                                    <a href="{{ route('admin.polls.index') }}" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex gap-x-3 rounded-md p-2 text-sm leading-6">
                                         AI Poll Builder
                                     </a>
                                 </li>
