@@ -18,6 +18,13 @@ class SurveyRenderer extends Component
     public $surveyId;
     public $survey;
 
+    public $isEligible = true;
+    public $ineligibilityReason = ''; // badge_low, country_mismatch
+    public $requiredBadge = '';
+    public $currentBadge = '';
+    public $requiredCountry = '';
+    public $userCountry = '';
+
     // Holds answer inputs mapped by question_id
     public $answers = [];
 
@@ -40,19 +47,29 @@ class SurveyRenderer extends Component
 
         // Enforce country matching
         $userCountry = session('mock_geo_country', \App\Services\GeoLocationService::getCountryFromIp(request()->ip()));
+        $this->userCountry = $userCountry;
+        $this->requiredCountry = $this->survey->target_country;
+
         if ($this->survey->target_country && $this->survey->target_country !== $userCountry) {
-            abort(403, "This survey is targeted exclusively to panelists residing in {$this->survey->target_country}. Your connection is detected from {$userCountry}.");
+            $this->isEligible = false;
+            $this->ineligibilityReason = 'country_mismatch';
+            return;
         }
 
         // Enforce badge eligibility matching
         $profile = PanelistProfile::firstOrCreate(['user_id' => auth()->id()]);
         $myBadge = $profile->badge_level ?? 'Bronze';
+        $this->currentBadge = $myBadge;
+        $this->requiredBadge = $this->survey->min_badge_level;
+
         $badgeRank = ['Bronze' => 1, 'Silver' => 2, 'Gold' => 3];
         $myRank = $badgeRank[$myBadge] ?? 1;
         $reqRank = $badgeRank[$this->survey->min_badge_level] ?? 1;
 
         if ($myRank < $reqRank) {
-            abort(403, "This survey requires a {$this->survey->min_badge_level} badge. Your current level is {$myBadge}. Please complete more qualification tests first.");
+            $this->isEligible = false;
+            $this->ineligibilityReason = 'badge_low';
+            return;
         }
 
         // Capture session start timestamp
