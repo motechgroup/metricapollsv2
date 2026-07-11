@@ -13,11 +13,19 @@ class Login extends Component
     public $email = '';
     public $password = '';
     public $remember = false;
+    public $isAdminLogin = false;
 
     protected $rules = [
         'email' => 'required|string|email',
         'password' => 'required|string',
     ];
+
+    public function mount()
+    {
+        if (request()->routeIs('admin.login') || request()->is('admin/login') || request()->is('admin/login/*')) {
+            $this->isAdminLogin = true;
+        }
+    }
 
     public function login()
     {
@@ -47,7 +55,24 @@ class Login extends Component
         // Clear rate limit on successful credentials match
         \Illuminate\Support\Facades\RateLimiter::clear($throttleKey);
 
-        // Generate 6-digit OTP code for secure login/2FA verification
+        // Staff login route: bypass OTP and log in directly
+        if ($this->isAdminLogin) {
+            if ($user->hasAnyRole(['Super Admin', 'Admin', 'Manager'])) {
+                auth()->login($user, $this->remember);
+                return redirect()->route('dashboard.index');
+            }
+
+            $this->addError('email', 'Access denied. Only administrators and staff members can access this workspace.');
+            return;
+        }
+
+        // Regular login route: force Google login for panelists
+        if ($user->hasRole('Panelist')) {
+            $this->addError('email', 'Please sign in using the "Continue with Google" button.');
+            return;
+        }
+
+        // Generate 6-digit OTP code for secure login/2FA verification (fallback)
         $otpCode = strval(rand(100000, 999999));
         $user->update([
             'otp_code' => $otpCode,

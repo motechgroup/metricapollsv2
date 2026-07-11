@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', Login::class)->name('login');
+    Route::get('/admin/login', Login::class)->name('admin.login');
     Route::get('/register', Register::class)->name('auth.register');
     Route::get('/forgot-password', ForgotPassword::class)->name('auth.forgot-password');
     Route::get('/reset-password/{token}', ResetPassword::class)->name('password.reset');
