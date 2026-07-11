@@ -217,13 +217,6 @@ class SettingsManagement extends Component
                 'mail.mailers.smtp.username' => $this->mail_username,
                 'mail.mailers.smtp.password' => $this->mail_password,
                 'mail.mailers.smtp.encryption' => $this->mail_encryption,
-                'mail.mailers.smtp.stream' => [
-                    'ssl' => [
-                        'allow_self_signed' => true,
-                        'verify_peer' => false,
-                        'verify_peer_name' => false,
-                    ],
-                ],
                 'mail.from.address' => $this->mail_from_address,
                 'mail.from.name' => $this->mail_from_name,
             ]);
@@ -233,7 +226,25 @@ class SettingsManagement extends Component
                 app()->make('mail.manager')->forgetMailers();
             }
 
-            \Illuminate\Support\Facades\Mail::to($this->testEmail)->send(
+            // Directly configure Symfony SocketStream to bypass broken CA file paths
+            $mailer = \Illuminate\Support\Facades\Mail::mailer();
+            $transport = $mailer->getSymfonyTransport();
+            if ($transport instanceof \Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport) {
+                $stream = $transport->getStream();
+                if ($stream instanceof \Symfony\Component\Mailer\Transport\Smtp\Stream\SocketStream) {
+                    $stream->setStreamOptions([
+                        'ssl' => [
+                            'allow_self_signed' => true,
+                            'verify_peer' => false,
+                            'verify_peer_name' => false,
+                            'cafile' => '',
+                            'capath' => '',
+                        ],
+                    ]);
+                }
+            }
+
+            $mailer->to($this->testEmail)->send(
                 new \App\Mail\CustomConfigurableMail(
                     "Metrica SMTP Test Mail Connection",
                     "Metrica Polls: This is a test email confirming that your SMTP connection settings are correctly configured on your live site!"
