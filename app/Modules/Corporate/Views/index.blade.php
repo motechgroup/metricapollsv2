@@ -8,8 +8,8 @@
     @php
         $heroBg = \App\Models\Setting::getValue('hero_background_image', 'images/hero_data_analytics.png');
     @endphp
-    <!-- Background Image with dynamic source, reduced opacity, grayscale filter, and blending -->
-    <div class="absolute inset-0 z-0 pointer-events-none opacity-[0.08] bg-cover bg-right select-none" style="background-image: url('{{ asset($heroBg) }}'); filter: grayscale(95%) contrast(100%); mix-blend-mode: multiply;"></div>
+    <!-- Background Image with dynamic source, blurred, colorful, reduced opacity, and blending -->
+    <div class="absolute inset-0 z-0 pointer-events-none opacity-[0.14] bg-cover bg-right select-none" style="background-image: url('{{ asset($heroBg) }}'); filter: blur(3px) contrast(105%); mix-blend-mode: multiply;"></div>
     <!-- Soft overlay gradient -->
     <div class="absolute inset-0 z-0 bg-gradient-to-tr from-white via-white/80 to-transparent pointer-events-none"></div>
 
