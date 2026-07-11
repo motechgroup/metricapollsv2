@@ -207,6 +207,7 @@ class SettingsManagement extends Component
 
         try {
             config([
+                'mail.default' => 'smtp',
                 'mail.mailers.smtp.host' => $this->mail_host,
                 'mail.mailers.smtp.port' => $this->mail_port,
                 'mail.mailers.smtp.username' => $this->mail_username,
