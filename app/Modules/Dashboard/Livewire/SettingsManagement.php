@@ -212,6 +212,7 @@ class SettingsManagement extends Component
 
             config([
                 'mail.default' => 'smtp',
+                'mail.driver' => null,
                 'mail.mailers.smtp.host' => $this->mail_host,
                 'mail.mailers.smtp.port' => $this->mail_port,
                 'mail.mailers.smtp.username' => $this->mail_username,
