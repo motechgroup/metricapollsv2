@@ -184,12 +184,6 @@
                 </div>
             @endif
 
-            <div class="mt-6 text-center border-t border-gray-150 pt-6">
-                <p class="text-xs text-gray-500">
-                    Are you a staff member? 
-                    <a href="{{ route('admin.login') }}" class="font-bold text-brand-navy hover:underline">Staff Sign In</a>
-                </p>
-            </div>
         @endif
 
     </div>
