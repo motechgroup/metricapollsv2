@@ -66,7 +66,9 @@ class AdminLoginTest extends TestCase
     public function test_user_can_login_with_phone_when_sms_enabled()
     {
         $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
-        \App\Models\Setting::setValue('site_login_type', 'SMS');
+        \App\Models\Setting::setValue('login_sms_enabled', '1');
+        \App\Models\Setting::setValue('login_email_enabled', '0');
+        \App\Models\Setting::setValue('login_google_enabled', '0');
 
         $user = User::create([
             'name' => 'Phone User',
@@ -85,7 +87,9 @@ class AdminLoginTest extends TestCase
     public function test_email_login_is_rejected_when_google_only_enabled()
     {
         $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
-        \App\Models\Setting::setValue('site_login_type', 'Google');
+        \App\Models\Setting::setValue('login_google_enabled', '1');
+        \App\Models\Setting::setValue('login_email_enabled', '0');
+        \App\Models\Setting::setValue('login_sms_enabled', '0');
 
         $user = User::create([
             'name' => 'Email User',

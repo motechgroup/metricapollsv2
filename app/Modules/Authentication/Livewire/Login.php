@@ -14,7 +14,9 @@ class Login extends Component
     public $password = '';
     public $remember = false;
     public $isAdminLogin = false;
-    public $siteLoginType = 'All';
+    public $login_google_enabled = true;
+    public $login_email_enabled = true;
+    public $login_sms_enabled = true;
     public $phone = '';
 
     protected $rules = [
@@ -27,21 +29,17 @@ class Login extends Component
         if (request()->routeIs('admin.login') || request()->is('admin/login') || request()->is('admin/login/*')) {
             $this->isAdminLogin = true;
         }
-        $this->siteLoginType = \App\Models\Setting::getValue('site_login_type', 'All');
+        $this->login_google_enabled = \App\Models\Setting::getValue('login_google_enabled', '1') === '1';
+        $this->login_email_enabled = \App\Models\Setting::getValue('login_email_enabled', '1') === '1';
+        $this->login_sms_enabled = \App\Models\Setting::getValue('login_sms_enabled', '1') === '1';
     }
 
     public function login()
     {
         // Enforce active login type settings for public portal
-        if (!$this->isAdminLogin) {
-            if ($this->siteLoginType === 'Google') {
-                $this->addError('email', 'Email login is currently disabled. Please use Google Sign In.');
-                return;
-            }
-            if ($this->siteLoginType === 'SMS') {
-                $this->addError('email', 'Email login is currently disabled. Please use SMS OTP Sign In.');
-                return;
-            }
+        if (!$this->isAdminLogin && !$this->login_email_enabled) {
+            $this->addError('email', 'Email login is currently disabled. Please use an active sign in method.');
+            return;
         }
 
         $this->validate();
@@ -81,9 +79,9 @@ class Login extends Component
             return;
         }
 
-        // Regular login route: force Google login for panelists (if setting is All, let staff bypass)
-        if ($user->hasRole('Panelist') && $this->siteLoginType !== 'Email' && $this->siteLoginType !== 'All') {
-            $this->addError('email', 'Please sign in using the "Continue with Google" button.');
+        // Regular login route: enforce email login is enabled for panelists
+        if ($user->hasRole('Panelist') && !$this->login_email_enabled) {
+            $this->addError('email', 'Email login is currently disabled.');
             return;
         }
 
@@ -108,7 +106,7 @@ class Login extends Component
         $this->validate(['phone' => 'required|string']);
 
         // Check if SMS login is enabled
-        if (!$this->isAdminLogin && $this->siteLoginType !== 'SMS' && $this->siteLoginType !== 'All') {
+        if (!$this->isAdminLogin && !$this->login_sms_enabled) {
             $this->addError('phone', 'SMS OTP sign in is currently disabled.');
             return;
         }
@@ -161,6 +159,10 @@ class Login extends Component
 
     public function loginWithGoogle($email, $name = 'Google User')
     {
+        if (!$this->login_google_enabled) {
+            $this->addError('email', 'Google sign in is currently disabled by the administrator.');
+            return;
+        }
         $user = User::where('email', $email)->first();
 
         if (!$user) {

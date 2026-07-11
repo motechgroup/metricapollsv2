@@ -97,16 +97,7 @@
                             @error('maintenance_mode') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
-                        <div>
-                            <label for="site_login_type" class="block text-sm font-medium text-gray-700">Panelist Sign In / Signup Method</label>
-                            <select wire:model="site_login_type" id="site_login_type" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
-                                <option value="All">All Methods Enabled (Google, Email, SMS)</option>
-                                <option value="Google">Google Account SSO Only</option>
-                                <option value="Email">Email &amp; Password Form Only</option>
-                                <option value="SMS">Phone Number &amp; SMS OTP Only</option>
-                            </select>
-                            @error('site_login_type') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
-                        </div>
+
 
                         <div class="sm:col-span-2">
                             <label for="site_seo_keywords" class="block text-sm font-medium text-gray-700">SEO Keywords (Comma separated)</label>
@@ -417,6 +408,65 @@
 
         <!-- Right Column: Info Panel -->
         <div class="space-y-6">
+            <!-- Sign In & Authentication Options Card -->
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm space-y-6 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 bg-gray-50">
+                    <h2 class="text-base font-bold text-gray-900">Authentication Options</h2>
+                    <p class="text-xs text-gray-500 mt-1">Enable or disable authentication channels for public portal panelists.</p>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    @if (session()->has('success_auth_types'))
+                        <div class="p-3 bg-green-50 border border-green-200 text-green-700 text-xs rounded-md">
+                            {{ session('success_auth_types') }}
+                        </div>
+                    @endif
+                    @if ($errors->has('auth_methods'))
+                        <div class="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-md">
+                            {{ $errors->first('auth_methods') }}
+                        </div>
+                    @endif
+
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex h-5 items-center">
+                                <input wire:model="login_google_enabled" type="checkbox" id="login_google_enabled" class="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900 bg-white">
+                            </div>
+                            <div class="ml-3 text-xs">
+                                <label for="login_google_enabled" class="font-bold text-gray-700">Google Account SSO</label>
+                                <p class="text-gray-500 mt-0.5">Allow users to register and sign in securely using Google OAuth.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="flex h-5 items-center">
+                                <input wire:model="login_email_enabled" type="checkbox" id="login_email_enabled" class="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900 bg-white">
+                            </div>
+                            <div class="ml-3 text-xs">
+                                <label for="login_email_enabled" class="font-bold text-gray-700">Email &amp; Password Form</label>
+                                <p class="text-gray-500 mt-0.5">Allow panelist log ins using traditional email credentials with secondary OTP codes.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="flex h-5 items-center">
+                                <input wire:model="login_sms_enabled" type="checkbox" id="login_sms_enabled" class="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900 bg-white">
+                            </div>
+                            <div class="ml-3 text-xs">
+                                <label for="login_sms_enabled" class="font-bold text-gray-700">Phone &amp; SMS OTP</label>
+                                <p class="text-gray-500 mt-0.5">Allow sign ins using registered phone numbers and secure SMS codes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 border-t border-gray-150 bg-gray-50 flex justify-end">
+                    <button type="button" wire:click="saveAuthTypes" class="inline-flex justify-center items-center rounded-md bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 transition">
+                        Save Sign In Options
+                    </button>
+                </div>
+            </div>
+
             <div class="bg-gray-900 border border-gray-950 p-6 rounded-lg shadow-lg text-white space-y-4">
                 <h3 class="text-sm font-bold uppercase tracking-wider">Independent Modules</h3>
                 <p class="text-xs text-gray-300 leading-relaxed font-sans">Each configuration module is now completely isolated. You can update and save your SMTP server credentials without filling in the rest of the site properties, descriptions, or templates.</p>
