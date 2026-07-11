@@ -117,6 +117,126 @@ try {
         'sort_order' => 3,
     ]);
 
+    // Kenya Survey
+    $ksurvey = \App\Modules\SurveyEngine\Models\Survey::updateOrCreate(
+        ['title' => 'Kenya Brand Beverage Audit'],
+        [
+            'project_id' => $project->id,
+            'description' => 'Evaluate brand perception and consumption frequency of Coca-Cola, Pepsi, and local beverage brands across Kenyan households.',
+            'status' => 'published',
+            'is_qualification' => false,
+            'is_paid' => true,
+            'payout_amount' => 100.00,
+            'min_badge_level' => 'Bronze',
+            'target_country' => 'Kenya',
+        ]
+    );
+    $ksurvey->questions()->delete();
+    \App\Modules\SurveyEngine\Models\Question::create([
+        'survey_id' => $ksurvey->id,
+        'type' => 'single_choice',
+        'question_text' => 'Which beverage brand do you purchase most frequently in Kenya?',
+        'options' => ['Coca-Cola', 'Pepsi', 'Fanta', 'Club Soda'],
+        'sort_order' => 1,
+    ]);
+    \App\Modules\SurveyEngine\Models\Question::create([
+        'survey_id' => $ksurvey->id,
+        'type' => 'single_choice',
+        'question_text' => 'Confirm you are reading this instruction. (Attention check: Select Coca-Cola)',
+        'options' => ['Coca-Cola', 'Pepsi', 'Fanta', 'Club Soda'],
+        'sort_order' => 2,
+    ]);
+
+    // Tanzania Survey
+    $tsurvey = \App\Modules\SurveyEngine\Models\Survey::updateOrCreate(
+        ['title' => 'Tanzania Dairy Product Survey'],
+        [
+            'project_id' => $project->id,
+            'description' => 'A market study investigating yoghurt and fresh milk brand preferences among consumers in Dar es Salaam, Arusha, and Dodoma.',
+            'status' => 'published',
+            'is_qualification' => false,
+            'is_paid' => true,
+            'payout_amount' => 100.00,
+            'min_badge_level' => 'Bronze',
+            'target_country' => 'Tanzania',
+        ]
+    );
+    $tsurvey->questions()->delete();
+    \App\Modules\SurveyEngine\Models\Question::create([
+        'survey_id' => $tsurvey->id,
+        'type' => 'single_choice',
+        'question_text' => 'Which dairy brand do you buy most often in Tanzania?',
+        'options' => ['ASAS', 'Tanga Fresh', 'Shamba', 'Cowbell'],
+        'sort_order' => 1,
+    ]);
+    \App\Modules\SurveyEngine\Models\Question::create([
+        'survey_id' => $tsurvey->id,
+        'type' => 'single_choice',
+        'question_text' => 'To prove attention, choose ASAS. (Attention check: Select ASAS)',
+        'options' => ['ASAS', 'Tanga Fresh', 'Shamba', 'Cowbell'],
+        'sort_order' => 2,
+    ]);
+
+    // Uganda Survey
+    $usurvey = \App\Modules\SurveyEngine\Models\Survey::updateOrCreate(
+        ['title' => 'Uganda Telco Performance Study'],
+        [
+            'project_id' => $project->id,
+            'description' => 'Evaluate cellular connectivity, MTN Mobile Money vs Airtel Money transaction speeds, and mobile data pricing in Kampala and Entebbe.',
+            'status' => 'published',
+            'is_qualification' => false,
+            'is_paid' => true,
+            'payout_amount' => 100.00,
+            'min_badge_level' => 'Bronze',
+            'target_country' => 'Uganda',
+        ]
+    );
+    $usurvey->questions()->delete();
+    \App\Modules\SurveyEngine\Models\Question::create([
+        'survey_id' => $usurvey->id,
+        'type' => 'single_choice',
+        'question_text' => 'What is your primary telecom carrier in Uganda?',
+        'options' => ['MTN Uganda', 'Airtel Uganda', 'Lycamobile', 'UTL'],
+        'sort_order' => 1,
+    ]);
+    \App\Modules\SurveyEngine\Models\Question::create([
+        'survey_id' => $usurvey->id,
+        'type' => 'single_choice',
+        'question_text' => 'Choose MTN Uganda to verify attention. (Attention check: Select MTN Uganda)',
+        'options' => ['MTN Uganda', 'Airtel Uganda', 'Lycamobile', 'UTL'],
+        'sort_order' => 2,
+    ]);
+
+    // Rwanda Survey
+    $rsurvey = \App\Modules\SurveyEngine\Models\Survey::updateOrCreate(
+        ['title' => 'Rwanda Financial Services Inclusivity Audit'],
+        [
+            'project_id' => $project->id,
+            'description' => 'A research study mapping mobile money access, bank agent banking usage, and cash float availability in Kigali and surrounding provinces.',
+            'status' => 'published',
+            'is_qualification' => false,
+            'is_paid' => true,
+            'payout_amount' => 100.00,
+            'min_badge_level' => 'Bronze',
+            'target_country' => 'Rwanda',
+        ]
+    );
+    $rsurvey->questions()->delete();
+    \App\Modules\SurveyEngine\Models\Question::create([
+        'survey_id' => $rsurvey->id,
+        'type' => 'single_choice',
+        'question_text' => 'Which mobile money service do you use most frequently in Rwanda?',
+        'options' => ['MTN MoMo Rwanda', 'Airtel Money', 'Bank Account', 'Cash Only'],
+        'sort_order' => 1,
+    ]);
+    \App\Modules\SurveyEngine\Models\Question::create([
+        'survey_id' => $rsurvey->id,
+        'type' => 'single_choice',
+        'question_text' => 'Select MTN MoMo Rwanda to complete this attention check. (Attention check: Select MTN MoMo Rwanda)',
+        'options' => ['MTN MoMo Rwanda', 'Airtel Money', 'Bank Account', 'Cash Only'],
+        'sort_order' => 2,
+    ]);
+
     // Seed new Academy Courses
     \App\Modules\PublicOpinion\Models\AcademyCourse::updateOrCreate(
         ['title' => 'Advanced Data Auditing and GPS Traps'],

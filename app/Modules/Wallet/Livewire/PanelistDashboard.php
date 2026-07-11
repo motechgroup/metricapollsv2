@@ -107,6 +107,9 @@ class PanelistDashboard extends Component
                     }
                 }
             })
+            ->where(function ($q) {
+                $q->whereNull('target_country')->orWhere('target_country', $this->mockCountry);
+            })
             ->whereNotIn('id', $takenSurveyIds)
             ->count();
     }

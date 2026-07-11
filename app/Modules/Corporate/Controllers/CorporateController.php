@@ -211,12 +211,121 @@ class CorporateController extends Controller
                 'options' => ['Excellent', 'Good', 'Average', 'Poor'],
                 'sort_order' => 3,
             ]);
+            // Seed 4 Country-specific brand product surveys
+            $kenyaSurvey = \App\Modules\SurveyEngine\Models\Survey::create([
+                'project_id' => $project->id,
+                'title' => 'Kenya Brand Beverage Audit',
+                'description' => 'Evaluate brand perception and consumption frequency of Coca-Cola, Pepsi, and local beverage brands across Kenyan households.',
+                'status' => 'published',
+                'is_qualification' => false,
+                'is_paid' => true,
+                'payout_amount' => 100.00,
+                'min_badge_level' => 'Bronze',
+                'target_country' => 'Kenya',
+            ]);
+            \App\Modules\SurveyEngine\Models\Question::create([
+                'survey_id' => $kenyaSurvey->id,
+                'type' => 'single_choice',
+                'question_text' => 'Which beverage brand do you purchase most frequently in Kenya?',
+                'options' => ['Coca-Cola', 'Pepsi', 'Fanta', 'Club Soda'],
+                'sort_order' => 1,
+            ]);
+            \App\Modules\SurveyEngine\Models\Question::create([
+                'survey_id' => $kenyaSurvey->id,
+                'type' => 'single_choice',
+                'question_text' => 'Confirm you are reading this instruction. (Attention check: Select Coca-Cola)',
+                'options' => ['Coca-Cola', 'Pepsi', 'Fanta', 'Club Soda'],
+                'sort_order' => 2,
+            ]);
+
+            $tzSurvey = \App\Modules\SurveyEngine\Models\Survey::create([
+                'project_id' => $project->id,
+                'title' => 'Tanzania Dairy Product Survey',
+                'description' => 'A market study investigating yoghurt and fresh milk brand preferences among consumers in Dar es Salaam, Arusha, and Dodoma.',
+                'status' => 'published',
+                'is_qualification' => false,
+                'is_paid' => true,
+                'payout_amount' => 100.00, // Points valuation
+                'min_badge_level' => 'Bronze',
+                'target_country' => 'Tanzania',
+            ]);
+            \App\Modules\SurveyEngine\Models\Question::create([
+                'survey_id' => $tzSurvey->id,
+                'type' => 'single_choice',
+                'question_text' => 'Which dairy brand do you buy most often in Tanzania?',
+                'options' => ['ASAS', 'Tanga Fresh', 'Shamba', 'Cowbell'],
+                'sort_order' => 1,
+            ]);
+            \App\Modules\SurveyEngine\Models\Question::create([
+                'survey_id' => $tzSurvey->id,
+                'type' => 'single_choice',
+                'question_text' => 'To prove attention, choose ASAS. (Attention check: Select ASAS)',
+                'options' => ['ASAS', 'Tanga Fresh', 'Shamba', 'Cowbell'],
+                'sort_order' => 2,
+            ]);
+
+            $ugSurvey = \App\Modules\SurveyEngine\Models\Survey::create([
+                'project_id' => $project->id,
+                'title' => 'Uganda Telco Performance Study',
+                'description' => 'Evaluate cellular connectivity, MTN Mobile Money vs Airtel Money transaction speeds, and mobile data pricing in Kampala and Entebbe.',
+                'status' => 'published',
+                'is_qualification' => false,
+                'is_paid' => true,
+                'payout_amount' => 100.00, // Points valuation
+                'min_badge_level' => 'Bronze',
+                'target_country' => 'Uganda',
+            ]);
+            \App\Modules\SurveyEngine\Models\Question::create([
+                'survey_id' => $ugSurvey->id,
+                'type' => 'single_choice',
+                'question_text' => 'What is your primary telecom carrier in Uganda?',
+                'options' => ['MTN Uganda', 'Airtel Uganda', 'Lycamobile', 'UTL'],
+                'sort_order' => 1,
+            ]);
+            \App\Modules\SurveyEngine\Models\Question::create([
+                'survey_id' => $ugSurvey->id,
+                'type' => 'single_choice',
+                'question_text' => 'Choose MTN Uganda to verify attention. (Attention check: Select MTN Uganda)',
+                'options' => ['MTN Uganda', 'Airtel Uganda', 'Lycamobile', 'UTL'],
+                'sort_order' => 2,
+            ]);
+
+            $rwSurvey = \App\Modules\SurveyEngine\Models\Survey::create([
+                'project_id' => $project->id,
+                'title' => 'Rwanda Financial Services Inclusivity Audit',
+                'description' => 'A research study mapping mobile money access, bank agent banking usage, and cash float availability in Kigali and surrounding provinces.',
+                'status' => 'published',
+                'is_qualification' => false,
+                'is_paid' => true,
+                'payout_amount' => 100.00, // Points valuation
+                'min_badge_level' => 'Bronze',
+                'target_country' => 'Rwanda',
+            ]);
+            \App\Modules\SurveyEngine\Models\Question::create([
+                'survey_id' => $rwSurvey->id,
+                'type' => 'single_choice',
+                'question_text' => 'Which mobile money service do you use most frequently in Rwanda?',
+                'options' => ['MTN MoMo Rwanda', 'Airtel Money', 'Bank Account', 'Cash Only'],
+                'sort_order' => 1,
+            ]);
+            \App\Modules\SurveyEngine\Models\Question::create([
+                'survey_id' => $rwSurvey->id,
+                'type' => 'single_choice',
+                'question_text' => 'Select MTN MoMo Rwanda to complete this attention check. (Attention check: Select MTN MoMo Rwanda)',
+                'options' => ['MTN MoMo Rwanda', 'Airtel Money', 'Bank Account', 'Cash Only'],
+                'sort_order' => 2,
+            ]);
         }
+
+        $country = session('mock_geo_country', \App\Services\GeoLocationService::getCountryFromIp(request()->ip()));
 
         $surveys = \App\Modules\SurveyEngine\Models\Survey::where('status', 'published')
             ->where(function ($query) {
                 $query->where('is_paid', true)
                     ->orWhere('is_qualification', true);
+            })
+            ->where(function ($q) use ($country) {
+                $q->whereNull('target_country')->orWhere('target_country', $country);
             })
             ->get();
 

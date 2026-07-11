@@ -38,6 +38,23 @@ class SurveyRenderer extends Component
         $this->surveyId = $surveyId;
         $this->survey = Survey::with('questions')->findOrFail($surveyId);
 
+        // Enforce country matching
+        $userCountry = session('mock_geo_country', \App\Services\GeoLocationService::getCountryFromIp(request()->ip()));
+        if ($this->survey->target_country && $this->survey->target_country !== $userCountry) {
+            abort(403, "This survey is targeted exclusively to panelists residing in {$this->survey->target_country}. Your connection is detected from {$userCountry}.");
+        }
+
+        // Enforce badge eligibility matching
+        $profile = PanelistProfile::firstOrCreate(['user_id' => auth()->id()]);
+        $myBadge = $profile->badge_level ?? 'Bronze';
+        $badgeRank = ['Bronze' => 1, 'Silver' => 2, 'Gold' => 3];
+        $myRank = $badgeRank[$myBadge] ?? 1;
+        $reqRank = $badgeRank[$this->survey->min_badge_level] ?? 1;
+
+        if ($myRank < $reqRank) {
+            abort(403, "This survey requires a {$this->survey->min_badge_level} badge. Your current level is {$myBadge}. Please complete more qualification tests first.");
+        }
+
         // Capture session start timestamp
         $this->startTime = time();
 

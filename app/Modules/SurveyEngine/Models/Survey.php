@@ -17,6 +17,7 @@ class Survey extends Model
         'payout_amount',
         'is_qualification',
         'min_badge_level',
+        'target_country',
     ];
 
     protected $casts = [
