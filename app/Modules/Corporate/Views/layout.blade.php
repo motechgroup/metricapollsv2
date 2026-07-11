@@ -105,13 +105,11 @@
                     </a>
                 </div>
 
-                <!-- Navigation Links -->
                 <nav class="hidden md:flex space-x-8 text-sm font-medium">
                     <a href="{{ route('corporate.features') }}" class="text-gray-600 hover:text-gray-900 py-2">Features</a>
-                    <a href="{{ route('corporate.pricing') }}" class="text-gray-600 hover:text-gray-900 py-2">Pricing</a>
                     <a href="{{ route('public.marketplace') }}" class="text-gray-600 hover:text-gray-900 py-2">Marketplace</a>
                     <a href="{{ route('public.opinion') }}" class="text-gray-600 hover:text-gray-900 py-2">Public Opinion</a>
-                    <a href="{{ route('public.reports') }}" class="text-gray-600 hover:text-gray-900 py-2">AI Reports</a>
+                    <a href="{{ route('public.reports') }}" class="text-gray-600 hover:text-gray-900 py-2">Reports</a>
                     <a href="{{ route('corporate.about') }}" class="text-gray-600 hover:text-gray-900 py-2">About</a>
                     <a href="{{ route('corporate.contact') }}" class="text-gray-600 hover:text-gray-900 py-2">Contact</a>
                 </nav>
@@ -159,10 +157,9 @@
                     <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Platform</h3>
                     <ul class="mt-4 space-y-2 text-sm">
                         <li><a href="{{ route('corporate.features') }}" class="text-gray-600 hover:text-gray-900">Features</a></li>
-                        <li><a href="{{ route('corporate.pricing') }}" class="text-gray-600 hover:text-gray-900">Pricing</a></li>
                         <li><a href="{{ route('public.marketplace') }}" class="text-gray-600 hover:text-gray-900">Marketplace</a></li>
                         <li><a href="{{ route('public.opinion') }}" class="text-gray-600 hover:text-gray-900">Public Opinion</a></li>
-                        <li><a href="{{ route('public.reports') }}" class="text-gray-600 hover:text-gray-900">AI Reports</a></li>
+                        <li><a href="{{ route('public.reports') }}" class="text-gray-600 hover:text-gray-900">Reports</a></li>
                     </ul>
                 </div>
                 <div>
