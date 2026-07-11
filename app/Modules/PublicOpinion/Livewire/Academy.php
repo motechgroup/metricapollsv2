@@ -38,12 +38,28 @@ class Academy extends Component
                 $profile = PanelistProfile::create([
                     'user_id' => auth()->id(),
                     'points_balance' => 0,
+                    'experience_points' => 0,
+                    'badge_level' => 'Bronze',
                     'is_verified' => false
                 ]);
             }
 
-            // Award points
+            // Award points and experience points
             $profile->increment('points_balance', $this->activeCourse->points_award);
+            $profile->increment('experience_points', $this->activeCourse->points_award);
+
+            // Recalculate Badge Level (Bronze -> Silver -> Gold)
+            $newBadge = 'Bronze';
+            $exp = $profile->experience_points;
+            if ($exp >= 300) {
+                $newBadge = 'Gold';
+            } elseif ($exp >= 100) {
+                $newBadge = 'Silver';
+            }
+
+            if ($profile->badge_level !== $newBadge) {
+                $profile->update(['badge_level' => $newBadge]);
+            }
 
             // Log Transaction
             Transaction::create([
@@ -57,7 +73,7 @@ class Academy extends Component
 
             $this->completedCourseIds[] = $this->activeCourse->id;
 
-            session()->flash('success', "Congratulations! You completed '{$this->activeCourse->title}' and earned {$this->activeCourse->points_award} points.");
+            session()->flash('success', "Congratulations! You completed '{$this->activeCourse->title}' and earned {$this->activeCourse->points_award} points and {$this->activeCourse->points_award} EXP!");
 
             // Reset
             $this->activeCourseId = null;
@@ -105,6 +121,38 @@ class Academy extends Component
                     [
                         'title' => 'Recording Observations Correctly',
                         'content' => 'Log answer inputs in real-time. In offline remote regions, ensure your offline device cache saves the data, capturing correct GPS tags for auditing before leaving the cohort area.'
+                    ]
+                ]
+            ]);
+
+            AcademyCourse::create([
+                'title' => 'Advanced Data Auditing and GPS Traps',
+                'description' => 'Learn about the advanced tracking technologies Metrica uses to verify respondent integrity, coordinate auditing, and timing traps.',
+                'points_award' => 75,
+                'lessons' => [
+                    [
+                        'title' => 'GPS Geofencing Auditing',
+                        'content' => 'Metrica Polls matches respondent locations against target census tracts. Falsifying device coordinates using mock locations results in immediate account suspension.'
+                    ],
+                    [
+                        'title' => 'Avoiding Time Traps',
+                        'content' => 'Panelists must spend a minimum of 2 seconds per question. Reading questions fully ensures high-quality results for enterprise research clients.'
+                    ]
+                ]
+            ]);
+
+            AcademyCourse::create([
+                'title' => 'FMCG Brand Auditing Protocols',
+                'description' => 'How to conduct product shelf monitoring and brand audit questionnaires in local retail stores.',
+                'points_award' => 100,
+                'lessons' => [
+                    [
+                        'title' => 'Brand Visibility Auditing',
+                        'content' => 'When auditing FMCG visibility, count the number of facings on the primary shelf at eye level. Take clear photos of brand placement without violating store privacy policies.'
+                    ],
+                    [
+                        'title' => 'Verification of Expiry & Pricing',
+                        'content' => 'Always cross-reference product shelf price tags against printed receipt barcodes. Accurate pricing intelligence is vital for retail distribution studies.'
                     ]
                 ]
             ]);

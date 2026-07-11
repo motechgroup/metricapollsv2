@@ -139,6 +139,78 @@ class CorporateController extends Controller
                 'options' => ['Mock Coordinates', 'Any Coordinates', 'Local Device Coordinates', 'None'],
                 'sort_order' => 2,
             ]);
+
+            // 5. Consumer Retail & FMCG Buying Habits 2026
+            $pSurvey2 = \App\Modules\SurveyEngine\Models\Survey::create([
+                'project_id' => $project->id,
+                'title' => 'Consumer Retail & FMCG Buying Habits 2026',
+                'description' => 'An FMCG research campaign auditing supermarket product selections, laundry detergent brands, and cooking oil brand loyalties across households.',
+                'status' => 'published',
+                'is_qualification' => false,
+                'is_paid' => true,
+                'payout_amount' => 450.00,
+                'min_badge_level' => 'Silver',
+            ]);
+
+            \App\Modules\SurveyEngine\Models\Question::create([
+                'survey_id' => $pSurvey2->id,
+                'type' => 'single_choice',
+                'question_text' => 'How often do you shop for household groceries?',
+                'options' => ['Daily', 'Weekly', 'Monthly', 'Rarely'],
+                'sort_order' => 1,
+            ]);
+
+            \App\Modules\SurveyEngine\Models\Question::create([
+                'survey_id' => $pSurvey2->id,
+                'type' => 'single_choice',
+                'question_text' => 'Confirm you are human. (Attention check: Select Weekly)',
+                'options' => ['Daily', 'Weekly', 'Monthly', 'Rarely'],
+                'sort_order' => 2,
+            ]);
+
+            \App\Modules\SurveyEngine\Models\Question::create([
+                'survey_id' => $pSurvey2->id,
+                'type' => 'single_choice',
+                'question_text' => 'Which factor is most important when choosing a cooking oil brand?',
+                'options' => ['Price', 'Quality', 'Brand Trust', 'Health benefits'],
+                'sort_order' => 3,
+            ]);
+
+            // 6. East African Telco & Internet Connectivity Census
+            $pSurvey3 = \App\Modules\SurveyEngine\Models\Survey::create([
+                'project_id' => $project->id,
+                'title' => 'East African Telco & Internet Connectivity Census',
+                'description' => 'A comprehensive study on cellular data packages, fibre internet reliability, and customer service satisfaction ratings.',
+                'status' => 'published',
+                'is_qualification' => false,
+                'is_paid' => true,
+                'payout_amount' => 600.00,
+                'min_badge_level' => 'Gold',
+            ]);
+
+            \App\Modules\SurveyEngine\Models\Question::create([
+                'survey_id' => $pSurvey3->id,
+                'type' => 'single_choice',
+                'question_text' => 'What is your primary home internet connection method?',
+                'options' => ['Mobile Data hotspot', 'Fibre-to-the-Home', 'Fixed LTE', 'No Internet'],
+                'sort_order' => 1,
+            ]);
+
+            \App\Modules\SurveyEngine\Models\Question::create([
+                'survey_id' => $pSurvey3->id,
+                'type' => 'single_choice',
+                'question_text' => 'To prove attention, choose Fibre-to-the-Home. (Attention check: Select Fibre-to-the-Home)',
+                'options' => ['Mobile Data hotspot', 'Fibre-to-the-Home', 'Fixed LTE', 'No Internet'],
+                'sort_order' => 2,
+            ]);
+
+            \App\Modules\SurveyEngine\Models\Question::create([
+                'survey_id' => $pSurvey3->id,
+                'type' => 'single_choice',
+                'question_text' => 'How would you rate your telco\'s customer care responsiveness?',
+                'options' => ['Excellent', 'Good', 'Average', 'Poor'],
+                'sort_order' => 3,
+            ]);
         }
 
         $surveys = \App\Modules\SurveyEngine\Models\Survey::where('status', 'published')
