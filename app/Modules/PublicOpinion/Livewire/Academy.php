@@ -233,6 +233,54 @@ class Academy extends Component
                     ]
                 ]
             ]);
+
+            AcademyCourse::create([
+                'title' => 'Media & Audience Measurement Methodologies',
+                'description' => 'Learn the core methodologies of media diaries, TV/radio rating points, digital audience audits, and out-of-home (OOH) billboards exposure.',
+                'points_award' => 180,
+                'lessons' => [
+                    [
+                        'title' => 'Media Diaries & Recall Logs',
+                        'content' => 'When logging TV or Radio exposure, record the exact station name, program name, and timeframe (quarter-hour blocks). Avoid post-rationalization; only log actual live viewing or listening habits.'
+                    ],
+                    [
+                        'title' => 'Digital Audience & Billboard Audits',
+                        'content' => 'Digital audience measurement captures unique impressions, click-through rates, and average watch durations. For OOH (out-of-home) billboard campaigns, geolocated survey points evaluate pedestrian and vehicle traffic flow density to estimate brand reach.'
+                    ]
+                ]
+            ]);
+
+            AcademyCourse::create([
+                'title' => 'Designing Effective Questionnaires & Survey Logic',
+                'description' => 'Understand the fundamentals of questionnaire design, skip logic, piping answers, and matrix questions to avoid respondent fatigue.',
+                'points_award' => 150,
+                'lessons' => [
+                    [
+                        'title' => 'Skip Logic & Branching',
+                        'content' => 'Skip logic dynamically hides or shows pages based on preceding answers. For instance, if a respondent does not drink coffee, the system automatically skips subsequent questions regarding favorite coffee bean brands.'
+                    ],
+                    [
+                        'title' => 'Reducing Respondent Fatigue',
+                        'content' => 'Avoid long matrix grids and repetitive rating scales. Keep prompt text concise and ensure multiple-choice lists include mutually exclusive options to keep response rates high.'
+                    ]
+                ]
+            ]);
+
+            AcademyCourse::create([
+                'title' => 'Data Validation & Cross-Reference Checks',
+                'description' => 'How research platforms audit data consistency across multiple variables (e.g., verifying age vs. year of birth and coordinate match checks).',
+                'points_award' => 220,
+                'lessons' => [
+                    [
+                        'title' => 'Logical Consistency Audits',
+                        'content' => 'System algorithms scan for contradictions. Declaring yourself as a teenager while selecting \'Master\'s Degree\' or \'20+ years of work experience\' is automatically flagged by our data quality engine as inconsistent data.'
+                    ],
+                    [
+                        'title' => 'Geolocation Verification Checks',
+                        'content' => 'The audit dashboard cross-checks the registered mobile ISP location against physical device GPS coordinates. Discrepancies indicate proxy/VPN routing and result in survey rejection.'
+                    ]
+                ]
+            ]);
         }
 
         $courses = AcademyCourse::all();
