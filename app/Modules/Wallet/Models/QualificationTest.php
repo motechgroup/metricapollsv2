@@ -11,10 +11,12 @@ class QualificationTest extends Model
         'description',
         'questions',
         'reward_points',
+        'level',
     ];
 
     protected $casts = [
         'questions' => 'array',
         'reward_points' => 'integer',
+        'level' => 'string',
     ];
 }

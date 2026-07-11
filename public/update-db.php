@@ -154,7 +154,97 @@ try {
         ]
     );
 
-    $output .= "\n[Seeding] Surveys and Academy courses seeded successfully!";
+    // Seed 150 random/predictability-avoiding qualification tests if they don't exist yet
+    if (\App\Modules\Wallet\Models\QualificationTest::count() < 150) {
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
+        \App\Modules\Wallet\Models\QualificationTest::truncate();
+        \Illuminate\Support\Facades\DB::table('panelist_qualifications')->truncate();
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
+
+        $categories = [
+            'Consumer Retail' => [
+                'Grocery frequency', 'Supermarket choice', 'Online shopping habits', 'Delivery service preferences', 'Laundry detergent choices',
+                'Breakfast cereal preferences', 'Fast food consumption', 'Beverage choices', 'Apparel budget', 'Cosmetics brand trust',
+                'Home appliance purchases', 'Organic food interest', 'Coffee shop loyalty', 'Local market vs mall shopping', 'Shoe brand preferences',
+                'Bulk buying habits', 'Discount store usage', 'E-commerce platform trust', 'Eco-friendly product choices', 'Pet food brands',
+                'Snack consumption frequency', 'Subscription box interest', 'Dairy product consumption', 'Frozen food preferences', 'Kitchen utensil selections',
+                'Gift card usage', 'Secondhand shopping', 'Luxury item purchases', 'Energy drink consumption', 'Baking ingredient buying'
+            ],
+            'Finance & Banking' => [
+                'Mobile money usage', 'Primary bank account choice', 'Savings frequency', 'Budgeting habits', 'Credit card preferences',
+                'Microfinance loans', 'Insurance policy coverage', 'Investment portfolios', 'Cash vs cashless payments', 'Digital banking app satisfaction',
+                'Personal loan usage', 'Fixed deposit interest', 'Stock market trading', 'Cryptocurrency familiarity', 'Pension contribution planning',
+                'Tax filing methods', 'Peer-to-peer lending', 'Financial literacy courses', 'Emergency fund sizing', 'Mobile loan apps usage',
+                'Real estate investment views', 'Family budget pooling', 'Gold and commodity savings', 'Foreign exchange transactions', 'Student loan repayment views',
+                'Chama/investment group participation', 'Mobile banking security views', 'Remittance receipt frequency', 'Contactless card usage', 'Wealth advisory trust'
+            ],
+            'Technology & Media' => [
+                'Smartphone brand preferences', 'Home internet speeds', 'Streaming services usage', 'Social media screen time', 'Gaming platform choices',
+                'Smart home device setups', 'Podcast listening frequency', 'Online news portals trust', 'Privacy settings awareness', 'Wearable fitness monitors',
+                'Virtual reality interest', 'Audiobook consumption', 'Ad blocker usage', 'Software subscription budgets', 'Laptop vs tablet primary usage',
+                'Cloud storage preferences', 'AI tools productivity use', 'Smart TV brand satisfaction', 'Cybersecurity tools installation', 'Newsletter subscription frequency',
+                'Dual SIM card configuration', 'Mobile app download frequency', 'Video conferencing preferences', 'Keyboard & mouse preferences', 'E-reader usage',
+                'Bluetooth accessory brand trust', 'Online forum participation', 'Tech review site trust', 'VPN service subscriptions', 'Coding and tech education interest'
+            ],
+            'Travel & Commuting' => [
+                'Daily commute methods', 'Ride-sharing app usage', 'Public transport reliability', 'Road trip frequency', 'Hotel booking preferences',
+                'Flight booking loyalty', 'Electric vehicle perception', 'Bicycle commuting frequency', 'Luggage brand choices', 'Holiday destination criteria',
+                'Airline ticket budget', 'Airport lounge access', 'Car rental frequency', 'Weekend getaway planning', 'Train travel experiences',
+                'Ride-share driver rating priority', 'Fuel efficiency tracking', 'Map navigation app choice', 'Backpacking vs luxury travel', 'Foreign travel frequency',
+                'Local tourism spots visited', 'Motorcycle transport usage', 'Carpooling arrangements', 'Commute duration tolerance', 'Travel insurance purchases',
+                'Cruise line interest', 'Historical site visiting frequency', 'Camping equipment ownership', 'Urban walking habits', 'Toll road usage frequency'
+            ],
+            'Healthcare & Lifestyle' => [
+                'Gym membership status', 'Daily hydration targets', 'Dietary preferences', 'Vitamins & supplements usage', 'Sleep tracking habits',
+                'Coffee intake frequency', 'Home cooking habits', 'Outdoor activity preferences', 'Mental health breaks', 'Fast food frequency',
+                'Water filter usage', 'Dental hygiene routines', 'Medication adherence views', 'Herbal remedies trust', 'Stress relief techniques',
+                'Morning routine habits', 'Therapeutic massage interest', 'Vegan alternative trials', 'Smoking/vaping history', 'Alcohol brand choices',
+                'Chronic illness tracking', 'Allergy management products', 'First aid kit readiness', 'Eco-friendly cleaning supplies', 'Yoga/mindfulness frequency',
+                'Running/jogging weekly miles', 'Skin care routine steps', 'Eye health checks frequency', 'Family health history awareness', 'Organic farming interest'
+            ]
+        ];
+
+        $testId = 1;
+        foreach ($categories as $catName => $subCats) {
+            foreach ($subCats as $index => $subCat) {
+                if ($testId <= 50) {
+                    $level = 'Level 1';
+                    $points = 50;
+                } elseif ($testId <= 100) {
+                    $level = 'Level 2';
+                    $points = 100;
+                } else {
+                    $level = 'Level 3';
+                    $points = 150;
+                }
+
+                \App\Modules\Wallet\Models\QualificationTest::create([
+                    'title' => "{$subCat} Audit ({$level})",
+                    'description' => "Detailed demographic check targeting consumer behaviors regarding {$subCat} under the {$catName} spectrum.",
+                    'reward_points' => $points,
+                    'level' => $level,
+                    'questions' => [
+                        [
+                            'text' => "Do you engage in {$subCat} activities or purchasing decisions at least once a month?",
+                            'options' => ['Yes', 'No']
+                        ],
+                        [
+                            'text' => "Which option best describes your frequency of {$subCat}?",
+                            'options' => ['Daily/Almost Daily', 'Weekly', 'Monthly', 'Rarely/Never']
+                        ],
+                        [
+                            'text' => "Select option A or Yes to pass the attention verification question. (Attention check)",
+                            'options' => ['Yes/Option A', 'No/Option B']
+                        ]
+                    ]
+                ]);
+
+                $testId++;
+            }
+        }
+    }
+
+    $output .= "\n[Seeding] Surveys, Academy courses, and 150 Qualification tests seeded successfully!";
 
     echo "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc;'>";
     echo "<h1 style='color: #15803d; margin-top: 0;'>Database Updated Successfully!</h1>";

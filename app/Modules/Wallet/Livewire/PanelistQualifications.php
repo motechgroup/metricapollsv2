@@ -17,6 +17,42 @@ class PanelistQualifications extends Component
     public $currentQuestionIndex = 0;
     public $answers = [];
 
+    // Store the 3 random tests served for the session to prevent list jumping
+    public $servedTestIds = [];
+
+    public function mount()
+    {
+        $this->loadRandomTests();
+    }
+
+    public function loadRandomTests()
+    {
+        $completedIds = DB::table('panelist_qualifications')
+            ->where('user_id', auth()->id())
+            ->pluck('qualification_test_id')
+            ->toArray();
+
+        $profile = PanelistProfile::firstOrCreate(
+            ['user_id' => auth()->id()],
+            ['points_balance' => 0, 'experience_points' => 0, 'badge_level' => 'Bronze', 'is_verified' => false]
+        );
+        $myBadge = $profile->badge_level ?? 'Bronze';
+
+        $allowedLevels = ['Level 1'];
+        if ($myBadge === 'Silver') {
+            $allowedLevels = ['Level 1', 'Level 2'];
+        } elseif ($myBadge === 'Gold') {
+            $allowedLevels = ['Level 1', 'Level 2', 'Level 3'];
+        }
+
+        $this->servedTestIds = QualificationTest::whereIn('level', $allowedLevels)
+            ->whereNotIn('id', $completedIds)
+            ->inRandomOrder()
+            ->limit(3)
+            ->pluck('id')
+            ->toArray();
+    }
+
     public function selectTest($id)
     {
         $this->activeTestId = $id;
@@ -61,7 +97,7 @@ class PanelistQualifications extends Component
             Transaction::create([
                 'user_id' => auth()->id(),
                 'type' => 'reward',
-                'amount' => $this->activeTest->reward_points / 100, // $0.50 for 50 points
+                'amount' => $this->activeTest->reward_points / 100,
                 'points' => $this->activeTest->reward_points,
                 'description' => 'Completed qualification: ' . $this->activeTest->title,
                 'status' => 'completed',
@@ -69,11 +105,14 @@ class PanelistQualifications extends Component
 
             session()->flash('success', "Qualification completed! You passed '{$this->activeTest->title}' and earned {$this->activeTest->reward_points} points.");
 
-            // Reset
+            // Reset active test
             $this->activeTestId = null;
             $this->activeTest = null;
             $this->currentQuestionIndex = 0;
             $this->answers = [];
+
+            // Reload fresh random uncompleted tests
+            $this->loadRandomTests();
         }
     }
 
@@ -85,47 +124,17 @@ class PanelistQualifications extends Component
         $this->answers = [];
     }
 
+    public function refreshTests()
+    {
+        $this->loadRandomTests();
+        session()->flash('info', 'Refreshed qualification tests pool.');
+    }
+
     public function render()
     {
-        // Auto-seed qualification tests if empty so the user has some to take right away!
-        if (QualificationTest::count() === 0) {
-            QualificationTest::create([
-                'title' => 'Consumer Purchasing Habits Qualification',
-                'description' => 'Qualify for high-budget retail research by detailing your monthly shopping cycles.',
-                'reward_points' => 50,
-                'questions' => [
-                    [
-                        'text' => 'Do you shop online at least once a month?',
-                        'options' => ['Yes', 'No']
-                    ],
-                    [
-                        'text' => 'What is your primary method of payment for retail purchases?',
-                        'options' => ['Mobile Money (M-Pesa)', 'Credit/Debit Card', 'Cash']
-                    ]
-                ]
-            ]);
+        // Query the currently served tests
+        $tests = QualificationTest::whereIn('id', $this->servedTestIds)->get();
 
-            QualificationTest::create([
-                'title' => 'Technology & Gadgets Adaptability Check',
-                'description' => 'Qualify for smartphone and computing research panels by detailing your daily internet usage.',
-                'reward_points' => 50,
-                'questions' => [
-                    [
-                        'text' => 'Do you own a smartphone?',
-                        'options' => ['Yes', 'No']
-                    ],
-                    [
-                        'text' => 'How many hours do you spend online daily?',
-                        'options' => ['Less than 2 hours', '2 to 5 hours', 'More than 5 hours']
-                    ]
-                ]
-            ]);
-        }
-
-        // Fetch tests
-        $tests = QualificationTest::all();
-
-        // Fetch completed qualification IDs
         $completedIds = DB::table('panelist_qualifications')
             ->where('user_id', auth()->id())
             ->pluck('qualification_test_id')
