@@ -155,8 +155,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($errors)) {
         // Create storage symlink
         try {
             $kernel->call('storage:link');
-        } catch (\Exception $se) {
-            // Ignore if symlink already exists
+        } catch (\Throwable $se) {
+            // Ignore if symlink already exists or if exec is disabled on host
         }
 
         $step = 3; // Success!
