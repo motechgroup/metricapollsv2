@@ -47,6 +47,32 @@ class AdminPollCreator extends Component
     {
         $this->researchDate = date('Y-m-d');
         $this->releaseDate = date('Y-m-d');
+        $this->generateDynamicMethodology();
+    }
+
+    public function updated($propertyName)
+    {
+        if (in_array($propertyName, ['researchDate', 'releaseDate', 'sampleSize', 'region', 'category'])) {
+            $this->generateDynamicMethodology();
+        }
+    }
+
+    public function generateDynamicMethodology()
+    {
+        $sample = number_format($this->sampleSize ?: 500);
+        $reg = $this->region ?: 'Nairobi, Kenya';
+        $cat = $this->category ?: 'General Research';
+        $start = $this->researchDate ?: date('Y-m-d');
+        $end = $this->releaseDate ?: date('Y-m-d');
+
+        $n = (int) $this->sampleSize;
+        if ($n > 0) {
+            $moe = round((1.96 / (2 * sqrt($n))) * 100, 2);
+        } else {
+            $moe = 4.38;
+        }
+
+        $this->methodology = "A randomized quantitative field study conducted in {$reg} between {$start} and {$end} targeting active cohorts under the {$cat} category. An analyzed sample size of {$sample} respondents was interviewed utilizing stratified random sampling via geofenced SMS-polling and device location audits, achieving an estimated margin of error of +/- {$moe}% at a 95% confidence level.";
     }
 
     public function addOption()

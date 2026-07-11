@@ -34,7 +34,7 @@
 
                         <div>
                             <label for="category" class="block text-sm font-medium text-gray-700">Research Focus Category</label>
-                            <select wire:model="category" id="category" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
+                            <select wire:model.live="category" id="category" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
                                 <option value="Brand Performance">Brand Performance</option>
                                 <option value="Political Popularity">Political Popularity</option>
                                 <option value="Product Feasibility">Product Feasibility</option>
@@ -61,25 +61,25 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div>
                             <label for="researchDate" class="block text-sm font-medium text-gray-700">Research Date</label>
-                            <input wire:model="researchDate" type="date" id="researchDate" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
+                            <input wire:model.live.debounce.250ms="researchDate" type="date" id="researchDate" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
                             @error('researchDate') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
                             <label for="releaseDate" class="block text-sm font-medium text-gray-700">Release Date</label>
-                            <input wire:model="releaseDate" type="date" id="releaseDate" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
+                            <input wire:model.live.debounce.250ms="releaseDate" type="date" id="releaseDate" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
                             @error('releaseDate') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
                             <label for="sampleSize" class="block text-sm font-medium text-gray-700">Analyzed Sample Size</label>
-                            <input wire:model="sampleSize" type="number" id="sampleSize" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
+                            <input wire:model.live.debounce.250ms="sampleSize" type="number" id="sampleSize" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
                             @error('sampleSize') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
                             <label for="region" class="block text-sm font-medium text-gray-700">Region / Covered Territory</label>
-                            <input wire:model="region" type="text" id="region" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
+                            <input wire:model.live.debounce.250ms="region" type="text" id="region" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
                             @error('region') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
