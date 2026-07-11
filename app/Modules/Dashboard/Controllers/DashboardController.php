@@ -37,14 +37,48 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        // Gather analytics statistics
+        // Gather analytics statistics from live database models
+        $totalUsers = User::count();
+        $totalPanelists = User::role('Panelist')->count();
+        $totalClients = User::role('Client')->count();
+        
+        $totalProjects = class_exists(\App\Modules\Projects\Models\Project::class) 
+            ? \App\Modules\Projects\Models\Project::count() 
+            : 0;
+            
+        $totalOrganizations = class_exists(\App\Modules\CRM\Models\ClientOrganization::class) 
+            ? \App\Modules\CRM\Models\ClientOrganization::count() 
+            : 0;
+            
+        $totalSurveys = class_exists(\App\Modules\SurveyEngine\Models\Survey::class) 
+            ? \App\Modules\SurveyEngine\Models\Survey::count() 
+            : 0;
+        
+        // Finances
+        $totalBilled = class_exists(\App\Models\Invoice::class) 
+            ? \App\Models\Invoice::sum('amount') 
+            : 0;
+            
+        $totalPaid = class_exists(\App\Models\Invoice::class) 
+            ? \App\Models\Invoice::where('status', 'paid')->sum('amount') 
+            : 0;
+            
+        $totalPayouts = class_exists(\App\Modules\Wallet\Models\Transaction::class) 
+            ? abs(\App\Modules\Wallet\Models\Transaction::where('type', 'withdrawal')->sum('amount')) 
+            : 0;
+
         $stats = [
-            'total_users' => User::count(),
+            'total_users' => $totalUsers,
+            'total_panelists' => $totalPanelists,
+            'total_clients' => $totalClients,
             'total_roles' => Role::count(),
             'total_permissions' => Permission::count(),
-            'active_surveys' => 12,      // Simulated for Phase 3
-            'response_rate' => '84.6%',  // Simulated for Phase 3
-            'active_projects' => 4       // Simulated for Phase 2
+            'active_surveys' => $totalSurveys,
+            'total_projects' => $totalProjects,
+            'total_organizations' => $totalOrganizations,
+            'total_billed' => $totalBilled,
+            'total_paid' => $totalPaid,
+            'total_payouts' => $totalPayouts,
         ];
 
         return view('Dashboard::index', compact('stats'));
