@@ -44,7 +44,7 @@ class PanelistWallet extends Component
         $refPrefix = $this->payoutMethod === 'mobile_money' ? 'MPESA' : 'AIRTIME';
         $mockRef = $refPrefix . '-' . strtoupper(bin2hex(random_bytes(4)));
 
-        // Create transaction
+        // Create transaction as pending for admin approval
         $transaction = Transaction::create([
             'user_id' => auth()->id(),
             'type' => 'withdrawal',
@@ -52,33 +52,12 @@ class PanelistWallet extends Component
             'points' => -$this->pointsToRedeem,
             'description' => 'Redeemed ' . $this->pointsToRedeem . ' points to ' . str_replace('_', ' ', $this->payoutMethod) . ' (' . $this->phoneNumber . ')',
             'reference' => $mockRef,
-            'status' => 'completed',
+            'status' => 'pending',
         ]);
-
-        // Send notifications
-        $kesAmount = $this->pointsToRedeem;
-        $user = auth()->user();
-
-        try {
-            $subject = \App\Models\Setting::getValue('mail_template_payout_subject', 'M-Pesa Payout Initiated - Metrica Polls');
-            $body = \App\Models\Setting::getValue('mail_template_payout_body', '');
-            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\CustomConfigurableMail($subject, $body, [
-                'name' => $user->name,
-                'amount' => number_format($kesAmount, 2),
-                'phone' => $this->phoneNumber,
-                'transaction_id' => $mockRef,
-            ]));
-
-            $smsTemplate = \App\Models\Setting::getValue('sms_template_payout', 'Metrica Polls: We have sent KES {amount} to your M-Pesa wallet. Ref: {ref}. Thank you for your feedback!');
-            $smsMsg = str_replace(['{amount}', '{ref}'], [number_format($kesAmount, 2), $mockRef], $smsTemplate);
-            \App\Services\TextSmsService::send($this->phoneNumber, $smsMsg);
-        } catch (\Throwable $e) {
-            logger("Payout notification failure: " . $e->getMessage());
-        }
 
         $this->phoneNumber = '';
         
-        session()->flash('success', 'Redemption processed! $' . number_format($usdAmount, 2) . ' USD equivalent has been sent to ' . $mockRef);
+        session()->flash('success', 'Redemption request submitted! Your request for $' . number_format($usdAmount, 2) . ' USD has been queued and is pending administrator review and approval.');
     }
 
     public function render()

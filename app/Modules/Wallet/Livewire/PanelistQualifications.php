@@ -27,6 +27,20 @@ class PanelistQualifications extends Component
 
     public function loadRandomTests()
     {
+        if (session()->has('served_test_ids')) {
+            $this->servedTestIds = session('served_test_ids');
+            $completedIds = DB::table('panelist_qualifications')
+                ->where('user_id', auth()->id())
+                ->pluck('qualification_test_id')
+                ->toArray();
+            
+            $this->servedTestIds = array_values(array_diff($this->servedTestIds, $completedIds));
+            
+            if (count($this->servedTestIds) > 0) {
+                return;
+            }
+        }
+
         $completedIds = DB::table('panelist_qualifications')
             ->where('user_id', auth()->id())
             ->pluck('qualification_test_id')
@@ -51,6 +65,8 @@ class PanelistQualifications extends Component
             ->limit(3)
             ->pluck('id')
             ->toArray();
+
+        session(['served_test_ids' => $this->servedTestIds]);
     }
 
     public function selectTest($id)
@@ -104,6 +120,9 @@ class PanelistQualifications extends Component
             ]);
 
             session()->flash('success', "Qualification completed! You passed '{$this->activeTest->title}' and earned {$this->activeTest->reward_points} points.");
+
+            // Clear session pool so a new pool is rolled
+            session()->forget('served_test_ids');
 
             // Reset active test
             $this->activeTestId = null;

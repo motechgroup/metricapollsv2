@@ -144,6 +144,18 @@
                             </a>
                         </li>
                         @endcan
+                        @role('Super Admin|Admin')
+                        <li>
+                            <a href="{{ route('admin.panelists.index') }}" class="{{ request()->routeIs('admin.panelists.index') ? 'bg-gray-50 text-gray-900 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6">
+                                Manage Panelists
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.payouts.index') }}" class="{{ request()->routeIs('admin.payouts.index') ? 'bg-gray-50 text-gray-900 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6">
+                                Manage Payouts
+                            </a>
+                        </li>
+                        @endrole
                         <li>
                             <a href="{{ route('admin.finances') }}" class="{{ request()->routeIs('admin.finances') ? 'bg-gray-50 text-gray-900 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6">
                                 Finances & Gateways
@@ -237,6 +249,18 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @role('Super Admin|Admin')
+                                <li>
+                                    <a href="{{ route('admin.panelists.index') }}" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex gap-x-3 rounded-md p-2 text-sm leading-6">
+                                        Manage Panelists
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('admin.payouts.index') }}" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex gap-x-3 rounded-md p-2 text-sm leading-6">
+                                        Manage Payouts
+                                    </a>
+                                </li>
+                                @endrole
                                 <li>
                                     <a href="{{ route('admin.finances') }}" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex gap-x-3 rounded-md p-2 text-sm leading-6">
                                         Finances & Gateways

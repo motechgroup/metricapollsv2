@@ -7,6 +7,8 @@ use App\Modules\PublicOpinion\Livewire\PublicOpinionPolls;
 use App\Modules\PublicOpinion\Livewire\PublicReportsGallery;
 use App\Modules\PublicOpinion\Livewire\AdminPollCreator;
 use App\Modules\PublicOpinion\Livewire\AdminPollManager;
+use App\Modules\PublicOpinion\Livewire\AdminPayoutManager;
+use App\Modules\PublicOpinion\Livewire\AdminPanelistManager;
 
 // Public routes
 Route::get('/marketplace', Marketplace::class)->name('public.marketplace');
@@ -22,4 +24,6 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'role:Super Admin|Admin|Project Manager'])->group(function () {
     Route::get('/admin/polls', AdminPollManager::class)->name('admin.polls.index');
     Route::get('/admin/polls/create', AdminPollCreator::class)->name('admin.polls.create');
+    Route::get('/admin/payouts', AdminPayoutManager::class)->name('admin.payouts.index');
+    Route::get('/admin/panelists', AdminPanelistManager::class)->name('admin.panelists.index');
 });
