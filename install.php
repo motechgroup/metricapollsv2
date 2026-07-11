@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($errors)) {
 
         $step = 3; // Success!
     } catch (\Throwable $e) {
-        $message = "Database connection or migration failed: " . $e->getMessage();
+        $message = "Database connection or migration failed: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine();
         $step = 2; // Return to form
     }
 } elseif (file_exists(__DIR__ . '/.env') && empty($_POST)) {
