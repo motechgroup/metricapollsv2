@@ -35,6 +35,8 @@ class SettingsManagement extends Component
     // Path visual placeholders
     public $logoPath;
     public $faviconPath;
+    public $heroBgPath;
+    public $hero_background_image; // Uploaded file
 
     // SMTP properties
     public $mail_host;
@@ -99,6 +101,7 @@ class SettingsManagement extends Component
         // Path references
         $this->logoPath = Setting::getValue('site_logo', 'images/logo.png');
         $this->faviconPath = Setting::getValue('site_favicon', 'favicon.png');
+        $this->heroBgPath = Setting::getValue('hero_background_image', 'images/hero_data_analytics.png');
 
         // SMTP configuration
         $this->mail_host = Setting::getValue('mail_host', 'smtp.mailtrap.io');
@@ -154,7 +157,16 @@ class SettingsManagement extends Component
             'analytics_code' => 'nullable|string',
             'site_logo' => 'nullable|image|max:1024', // max 1MB
             'site_favicon' => 'nullable|image|max:512', // max 512KB
+            'hero_background_image' => 'nullable|image|max:2048', // max 2MB
         ]);
+
+        // Process uploaded hero background
+        if ($this->hero_background_image) {
+            $filename = 'hero_bg_' . time() . '.' . $this->hero_background_image->getClientOriginalExtension();
+            $this->hero_background_image->storeAs('public/images', $filename);
+            $this->heroBgPath = 'storage/images/' . $filename;
+            Setting::setValue('hero_background_image', $this->heroBgPath);
+        }
 
         // Process uploaded logo
         if ($this->site_logo) {

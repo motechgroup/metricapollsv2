@@ -65,6 +65,25 @@
                             @error('site_favicon') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
+                        <!-- Hero Background Image -->
+                        <div class="sm:col-span-2 space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Hero Background Image</label>
+                            <div class="flex items-center gap-4">
+                                <div class="h-16 w-32 border border-gray-200 rounded flex items-center justify-center bg-gray-50 overflow-hidden relative">
+                                    @if ($hero_background_image)
+                                        <img src="{{ $hero_background_image->temporaryUrl() }}" class="w-full h-full object-cover">
+                                    @else
+                                        <img src="{{ asset($heroBgPath) }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/images/hero_data_analytics.png';">
+                                    @endif
+                                </div>
+                                <div class="space-y-1">
+                                    <input wire:model="hero_background_image" type="file" id="hero_background_image" class="text-xs file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xxs file:font-semibold file:bg-gray-900 file:text-white hover:file:bg-gray-800">
+                                    <p class="text-xxs text-gray-400 mt-1">Recommended: Wide landscape image representing clean, minimal data analytics (no humans, maximum 2MB).</p>
+                                </div>
+                            </div>
+                            @error('hero_background_image') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+
                         <div class="sm:col-span-2">
                             <label for="site_description" class="block text-sm font-medium text-gray-700">Meta Site Description</label>
                             <textarea wire:model="site_description" id="site_description" rows="3" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white"></textarea>

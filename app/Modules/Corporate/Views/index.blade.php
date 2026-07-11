@@ -3,12 +3,20 @@
 @section('title', 'Marketing & Research Firm')
 
 @section('content')
-<!-- Hero Section -->
-<section class="py-20 sm:py-28 bg-white border-b border-gray-100">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+<!-- Hero Section with Blended background image -->
+<section class="relative py-20 sm:py-28 bg-white border-b border-gray-100 overflow-hidden">
+    @php
+        $heroBg = \App\Models\Setting::getValue('hero_background_image', 'images/hero_data_analytics.png');
+    @endphp
+    <!-- Background Image with dynamic source, reduced opacity, grayscale filter, and blending -->
+    <div class="absolute inset-0 z-0 pointer-events-none opacity-[0.08] bg-cover bg-right select-none" style="background-image: url('{{ asset($heroBg) }}'); filter: grayscale(95%) contrast(100%); mix-blend-mode: multiply;"></div>
+    <!-- Soft overlay gradient -->
+    <div class="absolute inset-0 z-0 bg-gradient-to-tr from-white via-white/80 to-transparent pointer-events-none"></div>
+
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="max-w-3xl">
             <h1 class="text-4xl font-extrabold tracking-tight text-brand-navy sm:text-6xl">
-                Enterprise Marketing & Research Firm
+                Enterprise Marketing &amp; Research Firm
             </h1>
             <p class="mt-6 text-xl text-gray-600 leading-relaxed">
                 Scale your field operations, public opinion polls, and market research across millions of respondents. Metrica Polls combines offline field collection with real-time analytics to deliver executive quality insights.
