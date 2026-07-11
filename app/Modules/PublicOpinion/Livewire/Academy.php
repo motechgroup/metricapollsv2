@@ -15,34 +15,63 @@ class Academy extends Component
     public $activeCourse = null;
     public $currentLessonIndex = 0;
 
-    public $completedCourseIds = []; // Completed in active session or DB (we can track in session)
+    public $completedCourseIds = [];
+
+    public function mount()
+    {
+        $this->loadCompletedCourses();
+    }
+
+    public function loadCompletedCourses()
+    {
+        // Load persistently from transactions table
+        $this->completedCourseIds = Transaction::where('user_id', auth()->id())
+            ->where('type', 'reward')
+            ->where('description', 'like', 'Graduated Academy:%')
+            ->get()
+            ->map(function ($tx) {
+                $title = str_replace('Graduated Academy: ', '', $tx->description);
+                $course = AcademyCourse::where('title', $title)->first();
+                return $course ? $course->id : null;
+            })
+            ->filter()
+            ->unique()
+            ->toArray();
+    }
 
     public function selectCourse($id)
     {
         $this->activeCourseId = $id;
         $this->activeCourse = AcademyCourse::findOrFail($id);
         $this->currentLessonIndex = 0;
+        
+        // Start lesson timer to prevent fast-clicking fraud
+        session(['lesson_start_time' => now()->timestamp]);
     }
 
     public function nextLesson()
     {
+        // Validate minimum reading duration to prevent botting/cheating
+        $startTime = session('lesson_start_time');
+        $elapsed = $startTime ? (now()->timestamp - $startTime) : 0;
+
+        if ($elapsed < 5) {
+            $this->addError('speed', '⚠️ Integrity Trap: You are clicking through lessons too quickly. Please take at least 5 seconds to read and understand the material.');
+            return;
+        }
+
         $totalLessons = count($this->activeCourse->lessons);
 
         if ($this->currentLessonIndex + 1 < $totalLessons) {
             $this->currentLessonIndex++;
+            // Reset timer for next lesson
+            session(['lesson_start_time' => now()->timestamp]);
         } else {
             // Course Completed!
-            $profile = PanelistProfile::where('user_id', auth()->id())->first();
-
-            if (!$profile) {
-                $profile = PanelistProfile::create([
-                    'user_id' => auth()->id(),
-                    'points_balance' => 0,
-                    'experience_points' => 0,
-                    'badge_level' => 'Bronze',
-                    'is_verified' => false
-                ]);
-            }
+            $profile = PanelistProfile::firstOrCreate(
+                ['user_id' => auth()->id()],
+                ['points_balance' => 0, 'experience_points' => 0, 'badge_level' => 'Bronze', 'is_verified' => false]
+            );
 
             // Award points and experience points
             $profile->increment('points_balance', $this->activeCourse->points_award);
@@ -71,14 +100,14 @@ class Academy extends Component
                 'status' => 'completed',
             ]);
 
-            $this->completedCourseIds[] = $this->activeCourse->id;
+            session()->flash('success', "Congratulations! You completed '{$this->activeCourse->title}', earned {$this->activeCourse->points_award} points, {$this->activeCourse->points_award} EXP, and updated your badge level to {$newBadge}!");
 
-            session()->flash('success', "Congratulations! You completed '{$this->activeCourse->title}' and earned {$this->activeCourse->points_award} points and {$this->activeCourse->points_award} EXP!");
-
-            // Reset
             $this->activeCourseId = null;
             $this->activeCourse = null;
             $this->currentLessonIndex = 0;
+
+            // Reload completed list
+            $this->loadCompletedCourses();
         }
     }
 
@@ -156,12 +185,67 @@ class Academy extends Component
                     ]
                 ]
             ]);
+
+            AcademyCourse::create([
+                'title' => 'Public Opinion Polling & Neutrality Protocols',
+                'description' => 'Learn the scientific methodologies for recording unbiased public opinions, demographic representation, and margin of error fundamentals.',
+                'points_award' => 120,
+                'lessons' => [
+                    [
+                        'title' => 'Avoiding Leading Questions',
+                        'content' => 'Always read the opinion choices verbatim. Never inject tone emphasis, body language cues, or personal commentary that might skew a respondent towards a specific political or brand preference.'
+                    ],
+                    [
+                        'title' => 'Understanding Demographic Quotas',
+                        'content' => 'Surveys require specific proportions of age, gender, and regional cohorts. Adhering to these quotas ensures the statistical validity of public polls.'
+                    ]
+                ]
+            ]);
+
+            AcademyCourse::create([
+                'title' => 'Offline Mapping & Rural Cohort Audits',
+                'description' => 'Master offline database caching, synchronizing pending audits, and executing field mapping when research takes you off the grid.',
+                'points_award' => 150,
+                'lessons' => [
+                    [
+                        'title' => 'Offline Mode Operation',
+                        'content' => 'When in remote rural tracts, turn on Metrica\'s offline database mode. Ensure your local browser storage compiles responses safely before re-connecting to mobile cellular networks.'
+                    ],
+                    [
+                        'title' => 'Syncing Pending Audits',
+                        'content' => 'Once you return to an active cellular data signal, trigger the manual upload sync immediately to prevent data collision or timestamp overlap with other field enumerators.'
+                    ]
+                ]
+            ]);
+
+            AcademyCourse::create([
+                'title' => 'Mobile Money Agent & Financial Outlet Audits',
+                'description' => 'How to conduct physical shop audits at Safaricom M-Pesa, Airtel Money, and bank agent booths to inspect liquid cash float and tariff transparency.',
+                'points_award' => 200,
+                'lessons' => [
+                    [
+                        'title' => 'Float Liquidity Checks',
+                        'content' => 'When auditing financial agents, verify if they have sufficient cash float to process withdrawals up to 50,000 KES. Log actual cash vs digital float proportions accurately.'
+                    ],
+                    [
+                        'title' => 'Tariff Poster Visibility',
+                        'content' => 'Ensure the official tariff poster is clearly visible to customers. Take a geofenced photo of the tariff board to verify compliance with national financial regulatory guidelines.'
+                    ]
+                ]
+            ]);
         }
 
         $courses = AcademyCourse::all();
 
+        // Get current user profile for badge information display
+        $profile = PanelistProfile::where('user_id', auth()->id())->first();
+        $badge = $profile ? ($profile->badge_level ?? 'Bronze') : 'Bronze';
+        $exp = $profile ? ($profile->experience_points ?? 0) : 0;
+
         return view('PublicOpinion::livewire.academy', [
             'courses' => $courses,
-        ])->layout('Dashboard::panelist-portal'); // Uses panelist layout since it is part of their learning
+            'userBadge' => $badge,
+            'userExp' => $exp,
+        ])->layout('Dashboard::panelist-portal');
     }
 }
