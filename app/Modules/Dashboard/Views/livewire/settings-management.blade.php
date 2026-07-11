@@ -189,7 +189,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">SMTP Password</label>
-                            <input wire:model="mail_password" type="password" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm bg-white focus:border-gray-900 focus:outline-none">
+                            <input wire:model="mail_password" type="password" autocomplete="new-password" placeholder="Leave blank to keep existing password" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm bg-white focus:border-gray-900 focus:outline-none">
                             @error('mail_password') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>

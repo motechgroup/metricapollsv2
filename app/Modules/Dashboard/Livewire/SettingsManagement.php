@@ -214,13 +214,18 @@ class SettingsManagement extends Component
             @ini_set('openssl.cafile', '');
             @ini_set('openssl.capath', '');
 
+            $testPassword = $this->mail_password;
+            if (empty($testPassword)) {
+                $testPassword = Setting::getValue('mail_password', '');
+            }
+
             config([
                 'mail.default' => 'smtp',
                 'mail.driver' => null,
                 'mail.mailers.smtp.host' => $this->mail_host,
                 'mail.mailers.smtp.port' => $this->mail_port,
                 'mail.mailers.smtp.username' => $this->mail_username,
-                'mail.mailers.smtp.password' => $this->mail_password,
+                'mail.mailers.smtp.password' => $testPassword,
                 'mail.mailers.smtp.encryption' => $this->mail_encryption,
                 'mail.from.address' => $this->mail_from_address,
                 'mail.from.name' => $this->mail_from_name,
