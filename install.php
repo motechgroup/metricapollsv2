@@ -124,6 +124,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($errors)) {
     file_put_contents(__DIR__ . '/.env', $envTemplate);
 
     try {
+        // Clear stale bootstrap cache files to prevent "Class not found" errors for dev packages
+        $cacheFiles = [
+            __DIR__ . '/bootstrap/cache/packages.php',
+            __DIR__ . '/bootstrap/cache/services.php',
+            __DIR__ . '/bootstrap/cache/config.php',
+            __DIR__ . '/bootstrap/cache/routes-v7.php',
+            __DIR__ . '/bootstrap/cache/events.php',
+        ];
+        foreach ($cacheFiles as $file) {
+            if (file_exists($file)) {
+                @unlink($file);
+            }
+        }
+
         // Boot Laravel Kernel Internally
         require_once __DIR__ . '/vendor/autoload.php';
         $app = require_once __DIR__ . '/bootstrap/app.php';
