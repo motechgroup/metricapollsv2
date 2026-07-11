@@ -1,9 +1,36 @@
 @section('page_title', 'Panelist Dashboard')
 
 <div class="space-y-8 animate-fade-in">
+    <!-- Geolocation Security Banner -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-700 text-xs shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <span class="flex items-center gap-2">
+            🌍 <strong>Secured Connection:</strong> Detected Country: <span class="font-bold underline">{{ $detectedCountry }}</span>
+            @if($mockCountry !== $detectedCountry)
+                (Simulated as: <span class="font-bold text-blue-900 underline">{{ $mockCountry }}</span>)
+            @endif
+        </span>
+        <!-- Simulation Control -->
+        <div class="flex items-center gap-2">
+            <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Simulate Location:</span>
+            <select wire:model.live="mockCountry" class="rounded border-gray-300 text-xs px-2 py-0.5 text-gray-900 focus:outline-none bg-white font-semibold">
+                @foreach($allowedCountries as $c)
+                    <option value="{{ $c }}">{{ $c }}</option>
+                @endforeach
+                <option value="United States">United States (Banned)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Country Ban Alert -->
+    @if(!in_array($mockCountry, $allowedCountries))
+        <div class="p-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg shadow-sm font-semibold flex items-center gap-2">
+            ⚠️ Security Restriction: Metrica Polls operates exclusively in Kenya, Rwanda, Tanzania, Uganda, and Nigeria. Your simulated connection from {{ $mockCountry }} has restricted you from taking paid research surveys.
+        </div>
+    @endif
+
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Dashboard & Verification</h1>
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Dashboard &amp; Verification</h1>
             <p class="text-sm text-gray-500">Provide demographic variables and verify your phone number to qualify for high-paying consumer surveys.</p>
         </div>
         <div class="flex items-center gap-3">
@@ -28,14 +55,18 @@
         <div class="bg-white border border-gray-200 p-4 rounded-lg shadow-sm">
             <span class="block text-xxs font-bold uppercase tracking-wider text-gray-400">Wallet Balance</span>
             <span class="block text-xl font-bold text-gray-900 font-mono mt-1">{{ number_format($points_balance) }} pts</span>
-            <span class="block text-xxs text-gray-500 mt-1">Valued at ${{ number_format($points_balance / 100, 2) }} USD</span>
+            @if(in_array($mockCountry, $allowedCountries))
+                <span class="block text-xxs text-gray-500 mt-1">Valued at {{ $currencySymbol }} {{ number_format($points_balance * ($exchangeRate / 100), 2) }}</span>
+            @else
+                <span class="block text-xxs text-red-500 mt-1">Restricted Region</span>
+            @endif
         </div>
 
         <!-- experience points -->
         <div class="bg-white border border-gray-200 p-4 rounded-lg shadow-sm">
             <span class="block text-xxs font-bold uppercase tracking-wider text-gray-400">Experience (EXP)</span>
             <span class="block text-xl font-bold text-gray-900 font-mono mt-1">{{ number_format($experience_points) }} XP</span>
-            <div class="w-full bg-gray-150 rounded-full h-1.5 mt-2 overflow-hidden">
+            <div class="w-full bg-gray-155 rounded-full h-1.5 mt-2 overflow-hidden">
                 <div class="bg-blue-600 h-1.5 rounded-full" style="width: {{ min(100, ($experience_points / 300) * 100) }}%"></div>
             </div>
         </div>

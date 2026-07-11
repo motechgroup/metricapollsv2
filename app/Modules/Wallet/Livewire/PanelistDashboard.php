@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Modules\Wallet\Models\PanelistProfile;
 use App\Modules\Wallet\Models\Transaction;
 use App\Models\User;
+use App\Services\GeoLocationService;
 use Livewire\Attributes\Title;
 
 #[Title('Panelist Dashboard & Verification - Metrica Polls')]
@@ -32,6 +33,15 @@ class PanelistDashboard extends Component
     public $completedSurveysCount = 0;
     public $availableSurveysCount = 0;
 
+    // Geolocation fields
+    public $detectedCountry = 'Kenya';
+    public $mockCountry = 'Kenya';
+    public $allowedCountries = ['Kenya', 'Rwanda', 'Tanzania', 'Uganda', 'Nigeria'];
+    
+    public $currencySymbol = 'KES';
+    public $currencyCode = 'KES';
+    public $exchangeRate = 100;
+
     protected $rules = [
         'gender' => 'required|in:Male,Female,Other',
         'date_of_birth' => 'required|date|before:today',
@@ -42,6 +52,16 @@ class PanelistDashboard extends Component
 
     public function mount()
     {
+        // Detect Geolocation Country
+        $this->detectedCountry = GeoLocationService::getCountryFromIp(request()->ip());
+        $this->mockCountry = session('mock_geo_country', $this->detectedCountry);
+
+        // Fetch currency and conversion details
+        $currency = GeoLocationService::getCurrencyForCountry($this->mockCountry);
+        $this->currencySymbol = $currency['symbol'];
+        $this->currencyCode = $currency['code'];
+        $this->exchangeRate = $currency['rate'];
+
         $profile = PanelistProfile::firstOrCreate(
             ['user_id' => auth()->id()],
             ['points_balance' => 0, 'experience_points' => 0, 'badge_level' => 'Bronze', 'is_verified' => false]
@@ -66,6 +86,12 @@ class PanelistDashboard extends Component
 
         $this->completedSurveysCount = \App\Modules\SurveyEngine\Models\SurveyResponse::where('user_id', auth()->id())->count();
 
+        // Check if allowed country, else block available surveys
+        if (!GeoLocationService::isAllowedCountry($this->mockCountry)) {
+            $this->availableSurveysCount = 0;
+            return;
+        }
+
         // Calculate available surveys count based on badge level requirements
         $myBadge = $this->badge_level;
         $badgeRank = ['Bronze' => 1, 'Silver' => 2, 'Gold' => 3];
@@ -83,6 +109,12 @@ class PanelistDashboard extends Component
             })
             ->whereNotIn('id', $takenSurveyIds)
             ->count();
+    }
+
+    public function updatedMockCountry($value)
+    {
+        session(['mock_geo_country' => $value]);
+        return redirect()->route('dashboard.index');
     }
 
     public function saveProfile()
