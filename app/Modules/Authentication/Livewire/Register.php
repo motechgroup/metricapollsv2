@@ -14,6 +14,9 @@ class Register extends Component
     public $email = '';
     public $password = '';
     public $password_confirmation = '';
+    public $login_google_enabled = true;
+    public $login_email_enabled = true;
+    public $login_sms_enabled = true;
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -21,8 +24,20 @@ class Register extends Component
         'password' => 'required|string|min:8|confirmed',
     ];
 
+    public function mount()
+    {
+        $this->login_google_enabled = \App\Models\Setting::getValue('login_google_enabled', '1') === '1';
+        $this->login_email_enabled = \App\Models\Setting::getValue('login_email_enabled', '1') === '1';
+        $this->login_sms_enabled = \App\Models\Setting::getValue('login_sms_enabled', '1') === '1';
+    }
+
     public function register()
     {
+        if (!$this->login_email_enabled) {
+            $this->addError('email', 'Email registration is currently disabled by the administrator.');
+            return;
+        }
+
         $this->validate();
 
         $throttleKey = 'register:' . request()->ip();
@@ -62,6 +77,10 @@ class Register extends Component
 
     public function loginWithGoogle($email, $name = 'Google User')
     {
+        if (!$this->login_google_enabled) {
+            $this->addError('email', 'Google registration is currently disabled by the administrator.');
+            return;
+        }
         $user = User::where('email', $email)->first();
 
         if (!$user) {
