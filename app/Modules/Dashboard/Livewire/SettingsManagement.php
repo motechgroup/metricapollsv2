@@ -71,6 +71,11 @@ class SettingsManagement extends Component
     // Test Mail properties
     public $testEmail = '';
 
+    // Google OAuth properties
+    public $google_client_id;
+    public $google_client_secret;
+    public $google_redirect_url;
+
     public function mount()
     {
         // Resolve settings from Database via Setting helper
@@ -126,6 +131,11 @@ class SettingsManagement extends Component
         // Legal Pages
         $this->terms_of_service = Setting::getValue('terms_of_service', '');
         $this->privacy_policy = Setting::getValue('privacy_policy', '');
+
+        // Google OAuth configuration
+        $this->google_client_id = Setting::getValue('google_client_id', '');
+        $this->google_client_secret = Setting::getValue('google_client_secret', '');
+        $this->google_redirect_url = Setting::getValue('google_redirect_url', 'http://127.0.0.1:8002/login/google/callback');
     }
 
     public function saveGeneral()
@@ -339,6 +349,21 @@ class SettingsManagement extends Component
         Setting::setValue('login_sms_enabled', $this->login_sms_enabled ? '1' : '0');
 
         session()->flash('success_auth_types', 'Sign in options updated successfully.');
+    }
+
+    public function saveGoogleLogin()
+    {
+        $this->validate([
+            'google_client_id' => 'nullable|string|max:255',
+            'google_client_secret' => 'nullable|string|max:255',
+            'google_redirect_url' => 'nullable|url|max:255',
+        ]);
+
+        Setting::setValue('google_client_id', $this->google_client_id ?? '');
+        Setting::setValue('google_client_secret', $this->google_client_secret ?? '');
+        Setting::setValue('google_redirect_url', $this->google_redirect_url ?? '');
+
+        session()->flash('success_google_login', 'Google API OAuth settings saved successfully.');
     }
 
     public function render()

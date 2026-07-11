@@ -467,7 +467,52 @@
                 </div>
             </div>
 
-            <div class="bg-gray-900 border border-gray-950 p-6 rounded-lg shadow-lg text-white space-y-4">
+            <!-- Google OAuth Credentials Config Card -->
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mt-6">
+                <div class="p-6 border-b border-gray-150">
+                    <h2 class="text-sm font-bold text-gray-900 font-sans">Google API SSO Credentials</h2>
+                    <p class="text-xs text-gray-500 mt-1">Configure OAuth 2.0 Credentials from your Google Cloud Console for secure authentication.</p>
+                </div>
+                
+                @if (session()->has('success_google_login'))
+                    <div class="px-6 pt-4">
+                        <div class="p-4 bg-green-50 border border-green-200 text-green-700 text-sm rounded-md shadow-sm">
+                            {{ session('success_google_login') }}
+                        </div>
+                    </div>
+                @endif
+
+                <div class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 gap-6">
+                        <div>
+                            <label for="google_client_id" class="block text-xs font-semibold uppercase tracking-wider text-gray-400">Google Client ID</label>
+                            <input wire:model="google_client_id" type="text" id="google_client_id" placeholder="e.g. 1234567890-abc123xyz.apps.googleusercontent.com" class="mt-2 block w-full rounded-md border border-gray-300 px-3 py-2.5 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
+                            @error('google_client_id') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div>
+                            <label for="google_client_secret" class="block text-xs font-semibold uppercase tracking-wider text-gray-400">Google Client Secret</label>
+                            <input wire:model="google_client_secret" type="password" id="google_client_secret" placeholder="••••••••••••••••••••••••••••••••" class="mt-2 block w-full rounded-md border border-gray-300 px-3 py-2.5 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
+                            @error('google_client_secret') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div>
+                            <label for="google_redirect_url" class="block text-xs font-semibold uppercase tracking-wider text-gray-400">Authorized Redirect URI</label>
+                            <input wire:model="google_redirect_url" type="text" id="google_redirect_url" class="mt-2 block w-full rounded-md border border-gray-300 px-3 py-2.5 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
+                            <p class="text-xxs text-gray-400 mt-1">This URI must match the Authorized Redirect URIs in your Google Cloud Console Credentials.</p>
+                            @error('google_redirect_url') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 border-t border-gray-150 bg-gray-50 flex justify-end">
+                    <button type="button" wire:click="saveGoogleLogin" class="inline-flex justify-center items-center rounded-md bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 transition">
+                        Save Google API Credentials
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 border border-gray-950 p-6 rounded-lg shadow-lg text-white space-y-4 mt-6">
                 <h3 class="text-sm font-bold uppercase tracking-wider">Independent Modules</h3>
                 <p class="text-xs text-gray-300 leading-relaxed font-sans">Each configuration module is now completely isolated. You can update and save your SMTP server credentials without filling in the rest of the site properties, descriptions, or templates.</p>
             </div>

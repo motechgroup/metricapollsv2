@@ -40,7 +40,7 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perHour(3)->by($request->ip());
         });
 
-        // Bind dynamic SMTP configurations from settings database
+        // Bind dynamic configurations from settings database
         try {
             if (class_exists(\App\Models\Setting::class) && \Illuminate\Support\Facades\Schema::hasTable('settings')) {
                 config([
@@ -51,6 +51,11 @@ class AppServiceProvider extends ServiceProvider
                     'mail.mailers.smtp.encryption' => \App\Models\Setting::getValue('mail_encryption', config('mail.mailers.smtp.encryption')),
                     'mail.from.address' => \App\Models\Setting::getValue('mail_from_address', config('mail.from.address', 'noreply@metricapolls.com')),
                     'mail.from.name' => \App\Models\Setting::getValue('mail_from_name', config('mail.from.name', 'Metrica Polls')),
+
+                    // Google OAuth credentials
+                    'services.google.client_id' => \App\Models\Setting::getValue('google_client_id', config('services.google.client_id')),
+                    'services.google.client_secret' => \App\Models\Setting::getValue('google_client_secret', config('services.google.client_secret')),
+                    'services.google.redirect' => \App\Models\Setting::getValue('google_redirect_url', config('services.google.redirect')),
                 ]);
             }
         } catch (\Throwable $e) {
