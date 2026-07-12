@@ -3,11 +3,11 @@
 namespace App\Modules\Authentication\Controllers;
 
 use App\Http\Controllers\Controller;
-use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use App\Modules\Wallet\Models\PanelistProfile;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Http;
 
 class GoogleAuthController extends Controller
 {
@@ -15,43 +15,89 @@ class GoogleAuthController extends Controller
     {
         $enabled = Setting::getValue('login_google_enabled', '1') === '1';
         $clientId = Setting::getValue('google_client_id', '');
+        $redirectUrl = Setting::getValue('google_redirect_url', '');
 
-        if (!$enabled || empty($clientId)) {
-            return redirect()->route('login')->with('error', 'Google Sign In is not configured or disabled by the administrator.');
+        if (!$enabled || empty($clientId) || empty($redirectUrl)) {
+            return redirect()->route('login')->with('error', 'Google Sign In is not configured or is disabled by the administrator.');
         }
 
-        // Dynamically override config values at redirect time to guarantee they are loaded
-        config([
-            'services.google.client_id' => Setting::getValue('google_client_id'),
-            'services.google.client_secret' => Setting::getValue('google_client_secret'),
-            'services.google.redirect' => Setting::getValue('google_redirect_url'),
+        $authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query([
+            'client_id' => $clientId,
+            'redirect_uri' => $redirectUrl,
+            'response_type' => 'code',
+            'scope' => 'openid profile email',
+            'state' => csrf_token(),
         ]);
 
-        return Socialite::driver('google')->redirect();
+        return redirect()->away($authUrl);
     }
 
     public function handleGoogleCallback()
     {
-        // Dynamically override config values at callback time to guarantee they are loaded
-        config([
-            'services.google.client_id' => Setting::getValue('google_client_id'),
-            'services.google.client_secret' => Setting::getValue('google_client_secret'),
-            'services.google.redirect' => Setting::getValue('google_redirect_url'),
-        ]);
+        $enabled = Setting::getValue('login_google_enabled', '1') === '1';
+        $clientId = Setting::getValue('google_client_id', '');
+        $clientSecret = Setting::getValue('google_client_secret', '');
+        $redirectUrl = Setting::getValue('google_redirect_url', '');
 
-        try {
-            $googleUser = Socialite::driver('google')->user();
-        } catch (\Throwable $e) {
-            return redirect()->route('login')->with('error', 'Google Authentication failed: ' . $e->getMessage());
+        if (!$enabled || empty($clientId) || empty($clientSecret) || empty($redirectUrl)) {
+            return redirect()->route('login')->with('error', 'Google Sign In is not configured.');
         }
 
-        $user = User::where('email', $googleUser->getEmail())->first();
+        $code = request('code');
+
+        if (!$code) {
+            return redirect()->route('login')->with('error', 'Google authentication canceled or code missing.');
+        }
+
+        try {
+            // Exchange authorization code for Access Token natively via HTTP POST
+            $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
+                'code' => $code,
+                'client_id' => $clientId,
+                'client_secret' => $clientSecret,
+                'redirect_uri' => $redirectUrl,
+                'grant_type' => 'authorization_code',
+            ]);
+
+            if (!$response->successful()) {
+                logger("Google Token Exchange failure: " . $response->body());
+                return redirect()->route('login')->with('error', 'Failed to retrieve access token from Google.');
+            }
+
+            $data = $response->json();
+            $accessToken = $data['access_token'] ?? null;
+
+            if (!$accessToken) {
+                return redirect()->route('login')->with('error', 'Google token response structure invalid.');
+            }
+
+            // Fetch Google user profile info natively
+            $userResponse = Http::withToken($accessToken)->get('https://www.googleapis.com/oauth2/v3/userinfo');
+
+            if (!$userResponse->successful()) {
+                logger("Google UserInfo request failure: " . $userResponse->body());
+                return redirect()->route('login')->with('error', 'Failed to fetch user information from Google.');
+            }
+
+            $userData = $userResponse->json();
+            $email = $userData['email'] ?? null;
+            $name = $userData['name'] ?? 'Google User';
+
+            if (!$email) {
+                return redirect()->route('login')->with('error', 'Could not obtain email address from Google account.');
+            }
+        } catch (\Throwable $e) {
+            logger("Google OAuth exception occurred: " . $e->getMessage());
+            return redirect()->route('login')->with('error', 'OAuth error: ' . $e->getMessage());
+        }
+
+        $user = User::where('email', $email)->first();
 
         if (!$user) {
             // Register new Panelist
             $user = User::create([
-                'name' => $googleUser->getName() ?: 'Google User',
-                'email' => $googleUser->getEmail(),
+                'name' => $name,
+                'email' => $email,
                 'password' => Hash::make(strval(rand(100000, 999999))),
                 'status' => 'active',
             ]);
