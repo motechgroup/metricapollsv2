@@ -475,7 +475,11 @@ Failure to meet these quality standards will result in the rejection of survey r
 <h2>6. Your Rights & Contact Details</h2>
 <p>You have the right to access your stored data, update your details via the profile settings, or request the deletion of your account and all associated personal records at any time. To request account deletion or if you have any privacy questions, please contact our support team at <a href="mailto:support@metricapolls.com">support@metricapolls.com</a>.</p>');
 
-    $output .= "\n[Seeding] Surveys, Academy courses, 150 Qualification tests, and Legal documents seeded/updated successfully!";
+    // Update search engine optimization (SEO) details to target key research keywords
+    \App\Models\Setting::setValue('site_description', 'Metrica Polls is the leading market research, opinion polling, and consumer insights firm in East Africa. We deliver high-fidelity demographic data, brand health tracking, FMCG audits, and parastatal feasibility studies across Kenya, Uganda, Tanzania, and Rwanda with real-time rewarded survey panels.');
+    \App\Models\Setting::setValue('site_seo_keywords', 'market research East Africa, consumer insights Kenya, opinion polls Nairobi, Uganda feasibility study, Tanzania survey panel, Rwanda research firm, FMCG brand audit Africa, paid survey panel M-Pesa, parastatal data collection, corporate market intelligence, demographic research Africa, Metrica Polls');
+
+    $output .= "\n[Seeding] Surveys, Academy courses, 150 Qualification tests, Legal documents, and SEO metadata seeded/updated successfully!";
 
     echo "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc;'>";
     echo "<h1 style='color: #15803d; margin-top: 0;'>Database Updated Successfully!</h1>";
