@@ -63,4 +63,42 @@
             </div>
         </form>
     </div>
+
+    <!-- Confirmation Code Overlay/Modal -->
+    @if($showCodeConfirmation)
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-xl max-w-md w-full overflow-hidden">
+            <div class="p-6 space-y-4">
+                <div class="flex items-center justify-center h-12 w-12 rounded-full bg-blue-50 text-blue-600 mx-auto">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+                    </svg>
+                </div>
+                <div class="text-center space-y-1">
+                    <h3 class="text-base font-bold text-gray-900">Security Verification Required</h3>
+                    <p class="text-xs text-gray-500">To confirm updates to your username or password, enter the 6-digit verification code sent to your email.</p>
+                </div>
+
+                @if (session()->has('info'))
+                    <div class="p-3 bg-blue-50 border border-blue-200 text-blue-700 text-xxs font-semibold rounded-md text-center">
+                        {{ session('info') }}
+                    </div>
+                @endif
+
+                <div class="space-y-2">
+                    <input wire:model="enteredCode" type="text" maxlength="6" placeholder="Enter 6-digit code" class="block w-full rounded-md border border-gray-300 px-3 py-2 text-center text-lg font-bold tracking-widest focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 bg-white">
+                    @error('enteredCode') <span class="text-xs text-red-600 mt-1 block text-center">{{ $message }}</span> @enderror
+                </div>
+            </div>
+            <div class="bg-gray-50 px-6 py-4 flex gap-3 justify-end">
+                <button type="button" wire:click="cancelConfirmation" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">
+                    Cancel
+                </button>
+                <button type="button" wire:click="confirmSave" class="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 transition">
+                    Verify &amp; Save
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
