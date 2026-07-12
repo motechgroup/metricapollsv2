@@ -33,6 +33,13 @@ try {
     Artisan::call('migrate', ['--force' => true]);
     $output = Artisan::output();
 
+    // Clear all configuration, cache, and views programmatically
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
+    $output .= "\n[Cache-Clear] Config, application cache, routes, and views cleared successfully!";
+
     // Seed new surveys
     $org = \App\Modules\CRM\Models\ClientOrganization::firstOrCreate(['name' => 'Default Organization']);
     $project = \App\Modules\Projects\Models\Project::firstOrCreate(

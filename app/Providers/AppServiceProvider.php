@@ -43,8 +43,15 @@ class AppServiceProvider extends ServiceProvider
         // Bind dynamic configurations from settings database
         try {
             if (class_exists(\App\Models\Setting::class) && \Illuminate\Support\Facades\Schema::hasTable('settings')) {
+                $host = \App\Models\Setting::getValue('mail_host');
+
+                // Clear broken OpenSSL cafile paths dynamically to prevent connection crashes on shared hosting
+                @ini_set('openssl.cafile', '');
+                @ini_set('openssl.capath', '');
+
                 config([
-                    'mail.mailers.smtp.host' => \App\Models\Setting::getValue('mail_host', config('mail.mailers.smtp.host')),
+                    'mail.default' => !empty($host) ? 'smtp' : config('mail.default'),
+                    'mail.mailers.smtp.host' => $host ?: config('mail.mailers.smtp.host'),
                     'mail.mailers.smtp.port' => \App\Models\Setting::getValue('mail_port', config('mail.mailers.smtp.port')),
                     'mail.mailers.smtp.username' => \App\Models\Setting::getValue('mail_username', config('mail.mailers.smtp.username')),
                     'mail.mailers.smtp.password' => \App\Models\Setting::getValue('mail_password', config('mail.mailers.smtp.password')),
