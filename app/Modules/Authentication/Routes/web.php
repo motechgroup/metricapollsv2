@@ -8,6 +8,8 @@ use App\Modules\Authentication\Livewire\ResetPassword;
 use App\Modules\Authentication\Livewire\OtpVerification;
 use Illuminate\Support\Facades\Auth;
 
+use App\Modules\Authentication\Controllers\GoogleAuthController;
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', Login::class)->name('login');
     Route::get('/admin/login', Login::class)->name('admin.login');
@@ -15,6 +17,10 @@ Route::middleware('guest')->group(function () {
     Route::get('/forgot-password', ForgotPassword::class)->name('auth.forgot-password');
     Route::get('/reset-password/{token}', ResetPassword::class)->name('password.reset');
     Route::get('/verify-otp', OtpVerification::class)->name('auth.verify-otp');
+
+    // Google OAuth Routes
+    Route::get('/login/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('login.google');
+    Route::get('/login/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])->name('login.google.callback');
 });
 
 Route::middleware('auth')->group(function () {
