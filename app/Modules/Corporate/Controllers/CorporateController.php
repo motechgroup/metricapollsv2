@@ -372,4 +372,76 @@ class CorporateController extends Controller
         $content = \App\Models\Setting::getValue('privacy_policy', '');
         return view('Corporate::privacy', compact('content'));
     }
+
+    public function sitemap()
+    {
+        $urls = [
+            [
+                'loc' => route('corporate.index'),
+                'lastmod' => now()->startOfMonth()->toAtomString(),
+                'changefreq' => 'weekly',
+                'priority' => '1.0',
+            ],
+            [
+                'loc' => route('corporate.features'),
+                'lastmod' => now()->startOfMonth()->toAtomString(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => route('corporate.pricing'),
+                'lastmod' => now()->startOfMonth()->toAtomString(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => route('corporate.about'),
+                'lastmod' => now()->startOfMonth()->toAtomString(),
+                'changefreq' => 'monthly',
+                'priority' => '0.8',
+            ],
+            [
+                'loc' => route('corporate.contact'),
+                'lastmod' => now()->startOfMonth()->toAtomString(),
+                'changefreq' => 'monthly',
+                'priority' => '0.7',
+            ],
+            [
+                'loc' => route('corporate.terms'),
+                'lastmod' => now()->startOfYear()->toAtomString(),
+                'changefreq' => 'yearly',
+                'priority' => '0.3',
+            ],
+            [
+                'loc' => route('corporate.privacy'),
+                'lastmod' => now()->startOfYear()->toAtomString(),
+                'changefreq' => 'yearly',
+                'priority' => '0.3',
+            ],
+        ];
+
+        // Add Public opinion reports gallery if registered
+        if (\Illuminate\Support\Facades\Route::has('public.reports')) {
+            $urls[] = [
+                'loc' => route('public.reports'),
+                'lastmod' => now()->startOfWeek()->toAtomString(),
+                'changefreq' => 'daily',
+                'priority' => '0.9',
+            ];
+        }
+
+        // Add Academy if registered
+        if (\Illuminate\Support\Facades\Route::has('public.academy')) {
+            $urls[] = [
+                'loc' => route('public.academy'),
+                'lastmod' => now()->startOfWeek()->toAtomString(),
+                'changefreq' => 'daily',
+                'priority' => '0.9',
+            ];
+        }
+
+        $xml = view('Corporate::sitemap', compact('urls'))->render();
+
+        return response($xml, 200)->header('Content-Type', 'text/xml');
+    }
 }

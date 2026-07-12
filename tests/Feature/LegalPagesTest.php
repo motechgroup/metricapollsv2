@@ -25,4 +25,12 @@ class LegalPagesTest extends TestCase
         $response2->assertSee('Privacy Policy');
         $response2->assertSee('GDPR Compliance');
     }
+
+    public function test_sitemap_renders_successfully()
+    {
+        $response = $this->get(route('corporate.sitemap'));
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'text/xml; charset=UTF-8');
+        $response->assertSee('urlset');
+    }
 }

@@ -1,2 +1,9 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /panelist/
+Disallow: /client/
+Disallow: /livewire/
+
+Sitemap: https://metricapolls.com/sitemap.xml

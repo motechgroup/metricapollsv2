@@ -11,3 +11,4 @@ Route::get('/contact', [CorporateController::class, 'contact'])->name('corporate
 Route::get('/maintenance', [CorporateController::class, 'maintenance'])->name('public.maintenance');
 Route::get('/terms', [CorporateController::class, 'terms'])->name('corporate.terms');
 Route::get('/privacy', [CorporateController::class, 'privacy'])->name('corporate.privacy');
+Route::get('/sitemap.xml', [CorporateController::class, 'sitemap'])->name('corporate.sitemap');
