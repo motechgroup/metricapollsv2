@@ -64,7 +64,7 @@ class PublicReportsGallery extends Component
         $this->downloadingReportId = null;
         $this->visitorEmail = '';
 
-        session()->flash('success', "Report downloaded successfully!");
+        session()->flash('success', "Report generated and sent to {$emailCopy} successfully!");
 
         // 1. Process base64 branded logo for PDF compatibility
         $logoBase64 = null;
@@ -80,10 +80,36 @@ class PublicReportsGallery extends Component
             'logoBase64' => $logoBase64,
         ]);
 
-        // 3. Return stream download of PDF content
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->output();
-        }, strtolower(str_replace(' ', '_', $poll->title)) . '_report.pdf', [
+        $pdfContent = $pdf->output();
+        $filename = strtolower(str_replace(' ', '_', $poll->title)) . '_report.pdf';
+
+        // 3. Dispatch PDF report email natively
+        try {
+            $subject = "Your Metrica Polls Public Opinion Report";
+            $body = "Dear Reader,\n\nPlease find attached the public opinion report you requested from Metrica Polls:\n\n**Report:** {report_title}\n**Category:** {category}\n**Release Date:** {release_date}\n\nThank you for choosing Metrica Polls for market intelligence.";
+            
+            \Illuminate\Support\Facades\Mail::to($emailCopy)->send(new \App\Mail\CustomConfigurableMail(
+                $subject,
+                $body,
+                [
+                    'report_title' => $poll->title,
+                    'category' => $poll->category,
+                    'release_date' => $poll->release_date,
+                ],
+                $pdfContent,
+                $filename,
+                'application/pdf'
+            ));
+            
+            logger("Successfully emailed PDF report to {$emailCopy}");
+        } catch (\Throwable $e) {
+            logger("Failed to dispatch PDF report email to {$emailCopy}: " . $e->getMessage());
+        }
+
+        // 4. Return stream download of PDF content
+        return response()->streamDownload(function () use ($pdfContent) {
+            echo $pdfContent;
+        }, $filename, [
             'Content-Type' => 'application/pdf',
         ]);
     }

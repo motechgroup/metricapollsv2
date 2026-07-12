@@ -11,6 +11,9 @@ class CustomConfigurableMail extends Mailable
     use Queueable, SerializesModels;
 
     public $bodyContent;
+    public $attachmentData;
+    public $attachmentName;
+    public $attachmentMime;
 
     /**
      * Create a new message instance.
@@ -18,11 +21,17 @@ class CustomConfigurableMail extends Mailable
      * @param string $subject
      * @param string $body
      * @param array $placeholders
+     * @param mixed $attachmentData
+     * @param string|null $attachmentName
+     * @param string|null $attachmentMime
      */
-    public function __construct($subject, $body, $placeholders = [])
+    public function __construct($subject, $body, $placeholders = [], $attachmentData = null, $attachmentName = null, $attachmentMime = null)
     {
         $this->subject = $this->replacePlaceholders($subject, $placeholders);
         $this->bodyContent = $this->replacePlaceholders($body, $placeholders);
+        $this->attachmentData = $attachmentData;
+        $this->attachmentName = $attachmentName;
+        $this->attachmentMime = $attachmentMime;
     }
 
     /**
@@ -141,7 +150,15 @@ class CustomConfigurableMail extends Mailable
 </html>
 HTML;
 
-        return $this->html($htmlWrapper);
+        $mail = $this->html($htmlWrapper);
+
+        if ($this->attachmentData && $this->attachmentName) {
+            $mail->attachData($this->attachmentData, $this->attachmentName, [
+                'mime' => $this->attachmentMime ?? 'application/pdf',
+            ]);
+        }
+
+        return $mail;
     }
 
     /**
