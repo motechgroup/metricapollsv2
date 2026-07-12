@@ -99,19 +99,22 @@ class PanelistDashboard extends Component
 
         $takenSurveyIds = \App\Modules\SurveyEngine\Models\SurveyResponse::where('user_id', auth()->id())->pluck('survey_id')->toArray();
 
-        $this->availableSurveysCount = \App\Modules\SurveyEngine\Models\Survey::where('status', 'published')
+        $surveysQuery = \App\Modules\SurveyEngine\Models\Survey::where('status', 'published')
             ->where(function ($query) use ($myRank, $badgeRank) {
                 foreach ($badgeRank as $bName => $bVal) {
                     if ($bVal > $myRank) {
                         $query->where('min_badge_level', '!=', $bName);
                     }
                 }
-            })
-            ->where(function ($q) {
+            });
+
+        if (\Illuminate\Support\Facades\Schema::hasColumn('surveys', 'target_country')) {
+            $surveysQuery->where(function ($q) {
                 $q->whereNull('target_country')->orWhere('target_country', $this->mockCountry);
-            })
-            ->whereNotIn('id', $takenSurveyIds)
-            ->count();
+            });
+        }
+
+        $this->availableSurveysCount = $surveysQuery->whereNotIn('id', $takenSurveyIds)->count();
     }
 
     public function updatedMockCountry($value)

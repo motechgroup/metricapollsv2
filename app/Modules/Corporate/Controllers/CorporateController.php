@@ -319,15 +319,19 @@ class CorporateController extends Controller
 
         $country = session('mock_geo_country', \App\Services\GeoLocationService::getCountryFromIp(request()->ip()));
 
-        $surveys = \App\Modules\SurveyEngine\Models\Survey::where('status', 'published')
+        $surveysQuery = \App\Modules\SurveyEngine\Models\Survey::where('status', 'published')
             ->where(function ($query) {
                 $query->where('is_paid', true)
                     ->orWhere('is_qualification', true);
-            })
-            ->where(function ($q) use ($country) {
+            });
+
+        if (\Illuminate\Support\Facades\Schema::hasColumn('surveys', 'target_country')) {
+            $surveysQuery->where(function ($q) use ($country) {
                 $q->whereNull('target_country')->orWhere('target_country', $country);
-            })
-            ->get();
+            });
+        }
+
+        $surveys = $surveysQuery->get();
 
         return view('Corporate::index', compact('surveys'));
     }

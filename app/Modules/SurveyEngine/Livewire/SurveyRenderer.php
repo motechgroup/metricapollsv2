@@ -48,12 +48,15 @@ class SurveyRenderer extends Component
         // Enforce country matching
         $userCountry = session('mock_geo_country', \App\Services\GeoLocationService::getCountryFromIp(request()->ip()));
         $this->userCountry = $userCountry;
-        $this->requiredCountry = $this->survey->target_country;
+        
+        if (\Illuminate\Support\Facades\Schema::hasColumn('surveys', 'target_country')) {
+            $this->requiredCountry = $this->survey->target_country;
 
-        if ($this->survey->target_country && $this->survey->target_country !== $userCountry) {
-            $this->isEligible = false;
-            $this->ineligibilityReason = 'country_mismatch';
-            return;
+            if ($this->survey->target_country && $this->survey->target_country !== $userCountry) {
+                $this->isEligible = false;
+                $this->ineligibilityReason = 'country_mismatch';
+                return;
+            }
         }
 
         // Enforce badge eligibility matching
