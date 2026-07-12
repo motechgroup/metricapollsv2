@@ -101,10 +101,13 @@
                 <div class="lg:col-span-2 flex flex-col justify-between space-y-6 lg:border-l lg:border-gray-100 lg:pl-8">
                     <div class="space-y-4">
                         <div class="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wider">
-                            <span>Research Executive Synthesis</span>
+                            <span>Research Executive Synthesis (Preview)</span>
                         </div>
-                        <div class="text-xs text-gray-600 leading-relaxed font-sans bg-gray-50 border border-gray-100 p-6 rounded-md overflow-y-auto max-h-96">
-                            {!! nl2br(e($activeReport->ai_report)) !!}
+                        <div class="text-xs text-gray-650 leading-relaxed font-sans bg-gray-50 border border-gray-100 p-6 rounded-md">
+                            {!! nl2br(e(\Illuminate\Support\Str::limit($activeReport->ai_report, 280))) !!}
+                        </div>
+                        <div class="rounded-md bg-yellow-50 border border-yellow-150 p-3 text-xxs text-yellow-800 leading-normal">
+                            🔒 <strong>PREVIEW ONLY:</strong> You are viewing a brief preview of this report. The full detailed report including detailed executive summaries, methodology notes, and complete corporate strategic recommendations will be sent directly to your email.
                         </div>
                     </div>
 
@@ -114,11 +117,11 @@
                             <!-- Email Form Overlay -->
                             <form wire:submit.prevent="submitDownload" class="bg-gray-50 border border-gray-200 p-4 rounded-md space-y-3">
                                 <div>
-                                    <label for="visitorEmail" class="block text-xs font-bold text-gray-700 uppercase">Enter email to download full brief</label>
+                                    <label for="visitorEmail" class="block text-xs font-bold text-gray-700 uppercase">Enter email to receive the full PDF report</label>
                                     <div class="mt-1.5 flex gap-2">
                                         <input wire:model="visitorEmail" type="email" id="visitorEmail" placeholder="you@example.com" required class="block w-full rounded-md border border-gray-300 px-3 py-1.5 text-xs focus:border-gray-900 focus:outline-none bg-white">
                                         <button type="submit" class="rounded-md bg-gray-900 px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-gray-800 transition">
-                                            Unlock Brief
+                                            Email Full Report
                                         </button>
                                         <button type="button" wire:click="cancelDownload" class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50">
                                             Cancel
@@ -131,7 +134,7 @@
                             <div class="flex justify-between items-center">
                                 <span class="text-xxs text-gray-400 font-semibold font-mono font-bold tracking-wider">CLASSIFICATION: PUBLIC ACCESS</span>
                                 <button wire:click="downloadPrompt({{ $activeReport->id }})" class="inline-flex justify-center items-center rounded-md bg-gray-900 px-6 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-gray-800 transition">
-                                    Download Research Report
+                                    Email Me Full Report
                                 </button>
                             </div>
                         @endif

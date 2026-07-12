@@ -105,13 +105,6 @@ class PublicReportsGallery extends Component
         } catch (\Throwable $e) {
             logger("Failed to dispatch PDF report email to {$emailCopy}: " . $e->getMessage());
         }
-
-        // 4. Return stream download of PDF content
-        return response()->streamDownload(function () use ($pdfContent) {
-            echo $pdfContent;
-        }, $filename, [
-            'Content-Type' => 'application/pdf',
-        ]);
     }
 
     protected function seedReports()
