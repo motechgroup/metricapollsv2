@@ -425,7 +425,57 @@ try {
         }
     }
 
-    $output .= "\n[Seeding] Surveys, Academy courses, and 150 Qualification tests seeded successfully!";
+    // Populate professional Terms of Service and Privacy Policy matching Metrica Polls' exact nature
+    \App\Models\Setting::setValue('terms_of_service', '<h2>1. Acceptance of Terms</h2>
+<p>Welcome to Metrica Polls (the "Platform"), owned and operated by Metrica Research. By accessing, registering, or using our public opinion gallery, research portal, panelist dashboard, or academy resources, you agree to be bound by these Terms of Service. If you do not agree to these terms, you must immediately cease using the platform.</p>
+
+<h2>2. Eligibility & Account Security</h2>
+<p>To participate as a research panelist, you must be a resident of Kenya, Uganda, Tanzania, or Rwanda, and be at least 18 years of age. You agree to register exclusively using your personal Google Account single sign-on (SSO). Registering or maintaining multiple accounts per individual is strictly forbidden. Any attempt to use duplicate accounts, bots, or automated registration tools will result in permanent account termination and forfeiture of all accumulated rewards.</p>
+
+<h2>3. Paid Surveys, Reward Points, & M-Pesa Payouts</h2>
+<p>Panelists earn reward points by participating in eligible survey campaigns. Points are calculated on a <strong>1 Point = 1 KES</strong> basis (or the local currency equivalent for Uganda, Tanzania, and Rwanda). Points can be redeemed for mobile money disbursements (such as Safaricom M-Pesa) once you achieve the minimum redemption threshold configured in your dashboard. You are responsible for ensuring that the phone number linked to your profile is registered to receive mobile money transfer payments.</p>
+
+<h2>4. Anti-Fraud & Response Quality Control Standards</h2>
+<p>Metrica Polls enforces strict quality control measures to protect the integrity of the data provided to our corporate clients, NGOs, and government parastatals. Submissions are subject to automatic audit by our security engines, including:
+<ul>
+    <li><strong>Speed Trap Audit:</strong> Surveys completed significantly faster than normal human reading speeds are automatically flagged.</li>
+    <li><strong>Attention Checks:</strong> We embed attention-verification questions. Failing these checks will result in immediate rejection of the survey submission.</li>
+    <li><strong>Copy-Paste & Duplication Block:</strong> Open-ended text responses are audited for duplication, plagiarized web snippets, or repetitive copy-paste text.</li>
+    <li><strong>Geofencing & Verification:</strong> Panelists must match the geographical targets of the survey. Providing false location profiles is a violation of these terms.</li>
+</ul>
+Failure to meet these quality standards will result in the rejection of survey responses, forfeiture of points, and eventual suspension of your account.</p>
+
+<h2>5. Intellectual Property & Corporate Briefs</h2>
+<p>All survey structures, custom questions, research reports, interactive dashboards, and compiled PDF briefs available in our public opinion gallery or sent to your email are the exclusive intellectual property of Metrica Research and its clients. You may not republish, resell, or distribute these reports for commercial purposes without our express written consent.</p>
+
+<h2>6. Limitation of Liability</h2>
+<p>Metrica Research and its third-party service providers shall not be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use the platform, including delayed payout disbursements, system downtimes, or loss of data.</p>');
+
+    \App\Models\Setting::setValue('privacy_policy', '<h2>1. Information We Collect</h2>
+<p>We collect personal information directly from you when you register and interact with Metrica Polls. This includes:
+<ul>
+    <li><strong>Identity Data:</strong> Full name and email address provided during Google single sign-on (SSO) login.</li>
+    <li><strong>Demographic Profile Data:</strong> Location, region, phone number, gender, age, household size, occupation, and badges acquired.</li>
+    <li><strong>Research Submissions:</strong> Responses, feedback, and text entries submitted during survey campaigns or qualification audits.</li>
+</ul>
+</p>
+
+<h2>2. How We Use Your Information</h2>
+<p>Your personal and demographic data is used to match you with appropriate research campaigns and to analyze public opinions. We aggregate all survey responses to generate research audits and market feasibility reports for our client organizations. <strong>Personally Identifiable Information (PII) is completely encrypted, anonymized, and stripped from all research files</strong> sold to corporate clients, parastatals, or NGOs.</p>
+
+<h2>3. Mobile Money Integrations & Third-Party Sharing</h2>
+<p>We share your phone number and full name with mobile money service providers (such as Safaricom M-Pesa) solely to process your requested wallet point redemptions. We do not sell, rent, or distribute your email address, telephone number, or personal details to third-party advertisers or telemarketers.</p>
+
+<h2>4. Anti-Fraud & Audits</h2>
+<p>We log IP addresses, submission durations, location metrics, and clipboard behavior during active surveys to prevent fraudulent activities. These logs are processed locally on our secure servers and deleted once response quality verification is complete.</p>
+
+<h2>5. Data Security & Retention</h2>
+<p>We employ advanced administrative, physical, and technical controls (including SSL/TLS encryption, database hashing, and role-based access management) to protect your records from loss, alteration, or unauthorized disclosure. We retain your data only for as long as your account remains active or as required by local data protection regulations.</p>
+
+<h2>6. Your Rights & Contact Details</h2>
+<p>You have the right to access your stored data, update your details via the profile settings, or request the deletion of your account and all associated personal records at any time. To request account deletion or if you have any privacy questions, please contact our support team at <a href="mailto:support@metricapolls.com">support@metricapolls.com</a>.</p>');
+
+    $output .= "\n[Seeding] Surveys, Academy courses, 150 Qualification tests, and Legal documents seeded/updated successfully!";
 
     echo "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc;'>";
     echo "<h1 style='color: #15803d; margin-top: 0;'>Database Updated Successfully!</h1>";
