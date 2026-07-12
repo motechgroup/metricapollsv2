@@ -10,6 +10,7 @@
     <link rel="icon" type="image/png" href="{{ asset(\App\Models\Setting::getValue('site_favicon', 'favicon.png')) }}">
     <meta name="description" content="{{ \App\Models\Setting::getValue('site_description', '') }}">
     <meta name="keywords" content="{{ \App\Models\Setting::getValue('site_seo_keywords', '') }}">
+    <meta name="google-site-verification" content="i88kjSVdKpQHSV9sCr_SKGQLitjdijz44hz2eKwDl7I" />
     {!! \App\Models\Setting::getValue('analytics_code', '') !!}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
