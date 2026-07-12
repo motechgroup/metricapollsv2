@@ -11,6 +11,50 @@
     <meta name="description" content="{{ \App\Models\Setting::getValue('site_description', '') }}">
     <meta name="keywords" content="{{ \App\Models\Setting::getValue('site_seo_keywords', '') }}">
     <meta name="google-site-verification" content="i88kjSVdKpQHSV9sCr_SKGQLitjdijz44hz2eKwDl7I" />
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ request()->url() }}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request()->url() }}">
+    <meta property="og:title" content="@yield('title', \App\Models\Setting::getValue('site_title', 'Metrica Polls')) - Marketing &amp; Research Firm">
+    <meta property="og:description" content="{{ \App\Models\Setting::getValue('site_description', '') }}">
+    <meta property="og:image" content="{{ asset(\App\Models\Setting::getValue('site_logo', 'images/logo.png')) }}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ request()->url() }}">
+    <meta property="twitter:title" content="@yield('title', \App\Models\Setting::getValue('site_title', 'Metrica Polls')) - Marketing &amp; Research Firm">
+    <meta property="twitter:description" content="{{ \App\Models\Setting::getValue('site_description', '') }}">
+    <meta property="twitter:image" content="{{ asset(\App\Models\Setting::getValue('site_logo', 'images/logo.png')) }}">
+
+    <!-- LCP Image Preload for Performance Optimization -->
+    @if(request()->routeIs('corporate.index'))
+        <link rel="preload" as="image" href="{{ asset(\App\Models\Setting::getValue('hero_background_image', 'images/hero_data_analytics.png')) }}">
+        
+        <!-- Structured Organization Schema JSON-LD -->
+        <script type="application/ld+json">
+        {
+          "{{ '@' }}context": "https://schema.org",
+          "{{ '@' }}type": "Organization",
+          "name": "{{ \App\Models\Setting::getValue('site_title', 'Metrica Polls') }}",
+          "url": "{{ url('/') }}",
+          "logo": "{{ asset(\App\Models\Setting::getValue('site_logo', 'images/logo.png')) }}",
+          "description": "{{ \App\Models\Setting::getValue('site_description', '') }}",
+          "contactPoint": {
+            "{{ '@' }}type": "ContactPoint",
+            "telephone": "",
+            "contactType": "customer service",
+            "email": "{{ \App\Models\Setting::getValue('support_email', 'support@metricapolls.com') }}"
+          },
+          "sameAs": [
+            "https://twitter.com/metricapolls",
+            "https://www.linkedin.com/company/metricapolls"
+          ]
+        }
+        </script>
+    @endif
+
     {!! \App\Models\Setting::getValue('analytics_code', '') !!}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -102,7 +146,7 @@
                 <!-- Logo -->
                 <div class="flex flex-shrink-0 items-center">
                     <a href="{{ route('corporate.index') }}" class="flex items-center">
-                        <img src="{{ asset(\App\Models\Setting::getValue('site_logo', 'images/logo.png')) }}" alt="Metrica Polls Logo" class="h-8 w-auto" onerror="this.onerror=null; this.src='/favicon.png';">
+                        <img src="{{ asset(\App\Models\Setting::getValue('site_logo', 'images/logo.png')) }}" alt="Metrica Polls Logo" width="128" height="32" class="h-8 w-auto" onerror="this.onerror=null; this.src='/favicon.png';">
                     </a>
                 </div>
 
@@ -149,7 +193,7 @@
         <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="space-y-4">
-                    <img src="{{ asset(\App\Models\Setting::getValue('site_logo', 'images/logo.png')) }}" alt="Metrica Polls Logo" class="h-6 w-auto" onerror="this.onerror=null; this.src='/favicon.png';">
+                    <img src="{{ asset(\App\Models\Setting::getValue('site_logo', 'images/logo.png')) }}" alt="Metrica Polls Logo" width="96" height="24" loading="lazy" class="h-6 w-auto" onerror="this.onerror=null; this.src='/favicon.png';">
                     <p class="text-sm text-gray-500">
                         {{ \App\Models\Setting::getValue('site_description', '') }}
                     </p>
