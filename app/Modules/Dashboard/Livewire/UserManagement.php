@@ -22,11 +22,14 @@ class UserManagement extends Component
     public $userId = null;
     public $name = '';
     public $email = '';
+    public $phone = '';
+    public $client_organization_id = '';
     public $password = '';
     public $status = 'active';
     public $selectedRole = '';
 
     public $isFormOpen = false;
+    public $clientOrganizations = [];
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -43,12 +46,17 @@ class UserManagement extends Component
     {
         $this->resetValidation();
         $this->isFormOpen = true;
+        
+        // Fetch all client organizations for Client role assignment
+        $this->clientOrganizations = \App\Modules\CRM\Models\ClientOrganization::orderBy('name')->get()->toArray();
 
         if ($id) {
             $user = User::findOrFail($id);
             $this->userId = $user->id;
             $this->name = $user->name;
             $this->email = $user->email;
+            $this->phone = $user->phone ?? '';
+            $this->client_organization_id = $user->client_organization_id ?? '';
             $this->status = $user->status;
             $this->selectedRole = $user->roles->first()->name ?? '';
             $this->password = '';
@@ -56,6 +64,8 @@ class UserManagement extends Component
             $this->userId = null;
             $this->name = '';
             $this->email = '';
+            $this->phone = '';
+            $this->client_organization_id = '';
             $this->password = '';
             $this->status = 'active';
             $this->selectedRole = 'Panelist';
@@ -72,8 +82,10 @@ class UserManagement extends Component
         $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . ($this->userId ?? 'NULL'),
+            'phone' => 'nullable|string|max:30|unique:users,phone,' . ($this->userId ?? 'NULL'),
             'status' => 'required|in:active,suspended,pending',
             'selectedRole' => 'required|exists:roles,name',
+            'client_organization_id' => 'required_if:selectedRole,Client',
         ];
 
         if (!$this->userId) {
@@ -84,14 +96,18 @@ class UserManagement extends Component
 
         $this->validate($rules);
 
+        $userData = [
+            'name' => $this->name,
+            'email' => $this->email,
+            'phone' => !empty($this->phone) ? $this->phone : null,
+            'status' => $this->status,
+            'client_organization_id' => ($this->selectedRole === 'Client' && !empty($this->client_organization_id)) ? $this->client_organization_id : null,
+        ];
+
         if ($this->userId) {
             // Update User
             $user = User::findOrFail($this->userId);
-            $user->update([
-                'name' => $this->name,
-                'email' => $this->email,
-                'status' => $this->status,
-            ]);
+            $user->update($userData);
 
             if (!empty($this->password)) {
                 $user->update([
@@ -100,18 +116,36 @@ class UserManagement extends Component
             }
 
             $user->syncRoles([$this->selectedRole]);
+
+            // Ensure profile exists if user is role Panelist
+            if ($this->selectedRole === 'Panelist') {
+                \App\Modules\Wallet\Models\PanelistProfile::firstOrCreate([
+                    'user_id' => $user->id,
+                ], [
+                    'points_balance' => 0,
+                    'is_verified' => false,
+                ]);
+            }
+
             session()->flash('success', 'User profile updated successfully.');
         } else {
             // Create User
-            $user = User::create([
-                'name' => $this->name,
-                'email' => $this->email,
-                'status' => $this->status,
-                'password' => Hash::make($this->password),
-                'email_verified_at' => now(),
-            ]);
+            $userData['password'] = Hash::make($this->password);
+            $userData['email_verified_at'] = now();
 
+            $user = User::create($userData);
             $user->assignRole($this->selectedRole);
+
+            // Ensure profile exists if user is role Panelist
+            if ($this->selectedRole === 'Panelist') {
+                \App\Modules\Wallet\Models\PanelistProfile::firstOrCreate([
+                    'user_id' => $user->id,
+                ], [
+                    'points_balance' => 0,
+                    'is_verified' => false,
+                ]);
+            }
+
             session()->flash('success', 'New user registered successfully.');
         }
 
@@ -133,7 +167,7 @@ class UserManagement extends Component
 
     public function render()
     {
-        $query = User::with('roles')
+        $query = User::with(['roles', 'clientOrganization'])
             ->where(function ($q) {
                 $q->where('name', 'like', '%' . $this->search . '%')
                   ->orWhere('email', 'like', '%' . $this->search . '%');

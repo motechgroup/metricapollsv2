@@ -43,13 +43,18 @@
                     @error('email') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                 </div>
                 <div>
+                    <label class="block text-sm font-medium text-gray-700">Phone Number (Optional)</label>
+                    <input wire:model="phone" type="text" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900" placeholder="e.g. +254700000000">
+                    @error('phone') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-gray-700">Password {{ $userId ? '(leave blank to keep current)' : '' }}</label>
                     <input wire:model="password" type="password" class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
                     @error('password') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Security Role</label>
-                    <select wire:model="selectedRole" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
+                    <select wire:model.live="selectedRole" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
                         <option value="">Select Role</option>
                         @foreach($roles as $role)
                             <option value="{{ $role->name }}">{{ $role->name }}</option>
@@ -57,6 +62,18 @@
                     </select>
                     @error('selectedRole') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
                 </div>
+                @if($selectedRole === 'Client')
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Client Organization</label>
+                        <select wire:model="client_organization_id" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
+                            <option value="">Select Organization</option>
+                            @foreach($clientOrganizations as $org)
+                                <option value="{{ $org['id'] }}">{{ $org['name'] }}</option>
+                            @endforeach
+                        </select>
+                        @error('client_organization_id') <span class="text-xs text-red-600 mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+                @endif
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Account Status</label>
                     <select wire:model="status" required class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
@@ -121,7 +138,13 @@
                         <td class="whitespace-nowrap px-6 py-4">
                             <div class="flex flex-col">
                                 <span class="text-sm font-semibold text-gray-900">{{ $user->name }}</span>
-                                <span class="text-sm text-gray-500">{{ $user->email }}</span>
+                                <span class="text-xs text-gray-500">{{ $user->email }}</span>
+                                @if($user->phone)
+                                    <span class="text-xxs text-gray-400 mt-0.5">📞 {{ $user->phone }}</span>
+                                @endif
+                                @if($user->client_organization_id && $user->clientOrganization)
+                                    <span class="text-xxs text-indigo-600 font-semibold mt-0.5">🏢 {{ $user->clientOrganization->name }}</span>
+                                @endif
                             </div>
                         </td>
                         <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
