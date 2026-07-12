@@ -317,7 +317,7 @@
                     </button>
                     <!-- Dropdown Panel -->
                     <div x-show="open" @click.away="open = false" class="absolute right-0 z-10 mt-2.5 w-48 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1" style="display: none;">
-                        <a href="#" class="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50 pointer-events-none" role="menuitem">Your Profile</a>
+                        <a href="{{ route('admin.profile') }}" class="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50" role="menuitem">Your Profile</a>
                         <form method="POST" action="{{ route('auth.logout') }}">
                             @csrf
                             <button type="submit" class="block w-full text-left px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50" role="menuitem">

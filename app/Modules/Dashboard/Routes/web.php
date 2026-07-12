@@ -5,6 +5,7 @@ use App\Modules\Dashboard\Controllers\DashboardController;
 use App\Modules\Dashboard\Livewire\UserManagement;
 use App\Modules\Dashboard\Livewire\RoleManagement;
 use App\Modules\Dashboard\Livewire\SettingsManagement;
+use App\Modules\Dashboard\Livewire\ProfileSettings;
 
 Route::middleware('auth')->group(function () {
     // Dynamic redirect based on role
@@ -19,6 +20,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/roles', RoleManagement::class)->name('admin.roles')->middleware('permission:manage roles');
         Route::get('/settings', SettingsManagement::class)->name('admin.settings')->middleware('permission:manage settings');
         Route::get('/finances', \App\Modules\Dashboard\Livewire\FinancesManagement::class)->name('admin.finances');
+        Route::get('/profile', ProfileSettings::class)->name('admin.profile');
     });
 
     // Fallbacks for Panelist & Client portal stubs
