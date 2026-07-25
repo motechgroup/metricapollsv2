@@ -118,8 +118,28 @@
                         @endrole
                         @role('Super Admin|Admin|Project Manager')
                         <li>
+                            <a href="{{ route('admin.live-polls.index') }}" class="{{ request()->routeIs('admin.live-polls.index') ? 'bg-gray-50 text-gray-900 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6">
+                                Live & Political Polls
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.media-gallery.index') }}" class="{{ request()->routeIs('admin.media-gallery.index') ? 'bg-gray-50 text-gray-900 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6">
+                                Media Gallery
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.politicians.index') }}" class="{{ request()->routeIs('admin.politicians.index') ? 'bg-gray-50 text-gray-900 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6">
+                                Politicians & Candidates
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.parties.index') }}" class="{{ request()->routeIs('admin.parties.index') ? 'bg-gray-50 text-gray-900 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6">
+                                Political Parties
+                            </a>
+                        </li>
+                        <li>
                             <a href="{{ route('admin.polls.index') }}" class="{{ (request()->routeIs('admin.polls.index') || request()->routeIs('admin.polls.create')) ? 'bg-gray-50 text-gray-900 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6">
-                                AI Poll Builder
+                                AI Report Builder
                             </a>
                         </li>
                         @endrole
@@ -223,8 +243,28 @@
                                 @endrole
                                 @role('Super Admin|Admin|Project Manager')
                                 <li>
+                                    <a href="{{ route('admin.live-polls.index') }}" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex gap-x-3 rounded-md p-2 text-sm leading-6">
+                                        Live & Political Polls
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('admin.media-gallery.index') }}" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex gap-x-3 rounded-md p-2 text-sm leading-6">
+                                        Media Gallery
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('admin.politicians.index') }}" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex gap-x-3 rounded-md p-2 text-sm leading-6">
+                                        Politicians & Candidates
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('admin.parties.index') }}" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex gap-x-3 rounded-md p-2 text-sm leading-6">
+                                        Political Parties
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="{{ route('admin.polls.index') }}" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 group flex gap-x-3 rounded-md p-2 text-sm leading-6">
-                                        AI Poll Builder
+                                        AI Report Builder
                                     </a>
                                 </li>
                                 @endrole
