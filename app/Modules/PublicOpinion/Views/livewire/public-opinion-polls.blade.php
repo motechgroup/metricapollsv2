@@ -92,11 +92,12 @@
                     <label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">POSITION / OFFICE</label>
                     <select wire:model.live="selectedPosition" style="width: 100%; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; color: #0f172a; background-color: #ffffff;">
                         <option value="">All Positions</option>
-                        <option value="Woman Representative">Woman Representative</option>
+                        <option value="President">President</option>
                         <option value="Governor">Governor</option>
                         <option value="Senator">Senator</option>
-                        <option value="President">President</option>
+                        <option value="Woman Representative">Woman Representative</option>
                         <option value="Member of Parliament">Member of Parliament (MP)</option>
+                        <option value="Member of County Assembly">Member of County Assembly (MCA)</option>
                     </select>
                 </div>
             </div>

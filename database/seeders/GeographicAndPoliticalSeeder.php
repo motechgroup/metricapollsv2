@@ -258,6 +258,26 @@ class GeographicAndPoliticalSeeder extends Seeder
                 'position_title' => 'President',
                 'bio' => 'High Representative for Infrastructure & African Union envoy.',
             ],
+            [
+                'name' => 'Hon. Alvin Palapala',
+                'photo_path' => '/images/politicians/palapala.jpg',
+                'political_party_id' => $parties['ODM']->id,
+                'level' => 'constituency',
+                'region_id' => $nairobiRegion?->id,
+                'county_id' => $nairobiCounty?->id,
+                'position_title' => 'Member of County Assembly (MCA)',
+                'bio' => 'Kitisuru Ward Member of County Assembly.',
+            ],
+            [
+                'name' => 'Hon. Robert Alai',
+                'photo_path' => '/images/politicians/alai.jpg',
+                'political_party_id' => $parties['ODM']->id,
+                'level' => 'constituency',
+                'region_id' => $nairobiRegion?->id,
+                'county_id' => $nairobiCounty?->id,
+                'position_title' => 'Member of County Assembly (MCA)',
+                'bio' => 'Kileleshwa Ward Member of County Assembly.',
+            ],
         ];
 
         foreach ($politiciansData as $pol) {
@@ -388,6 +408,45 @@ class GeographicAndPoliticalSeeder extends Seeder
                 'status' => 'live',
                 'expires_at' => now()->addDays(30),
                 'votes_count' => 24250,
+            ]
+        );
+
+        // Poll 4: Member of County Assembly (MCA) Ward Poll (LIVE)
+        $palapala = Politician::where('name', 'Hon. Alvin Palapala')->first();
+        $alai = Politician::where('name', 'Hon. Robert Alai')->first();
+
+        $mcaPollOptions = [
+            [
+                'name' => 'Hon. Alvin Palapala',
+                'politician_id' => $palapala?->id,
+                'party_name' => 'ODM',
+                'party_color' => '#F97316',
+                'photo' => '/images/politicians/palapala.jpg',
+                'votes' => 2150,
+            ],
+            [
+                'name' => 'Hon. Robert Alai',
+                'politician_id' => $alai?->id,
+                'party_name' => 'ODM',
+                'party_color' => '#F97316',
+                'photo' => '/images/politicians/alai.jpg',
+                'votes' => 1840,
+            ],
+        ];
+
+        PublicOpinion::updateOrCreate(
+            ['topic' => 'Preferred Member of County Assembly (MCA) Candidate Rating 2026'],
+            [
+                'target_level' => 'county',
+                'region_id' => $nairobiRegion?->id,
+                'county_id' => $nairobiCounty?->id,
+                'position_title' => 'Member of County Assembly (MCA)',
+                'options' => ['Hon. Alvin Palapala', 'Hon. Robert Alai'],
+                'candidates_data' => $mcaPollOptions,
+                'status' => 'live',
+                'allow_public_voting' => true,
+                'expires_at' => now()->addDays(20),
+                'votes_count' => 3990,
             ]
         );
     }
