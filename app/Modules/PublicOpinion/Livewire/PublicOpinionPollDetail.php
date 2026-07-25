@@ -8,6 +8,7 @@ use App\Modules\PublicOpinion\Models\PublicOpinionVote;
 use App\Modules\PublicOpinion\Models\PublicOpinionComment;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class PublicOpinionPollDetail extends Component
 {
@@ -29,16 +30,30 @@ class PublicOpinionPollDetail extends Component
 
     public function mount($poll)
     {
+        $relations = [];
+        if (Schema::hasTable('regions')) $relations[] = 'region';
+        if (Schema::hasTable('counties')) $relations[] = 'county';
+        if (Schema::hasTable('constituencies')) $relations[] = 'constituency';
+        if (Schema::hasTable('public_opinion_comments')) $relations[] = 'comments';
+
         if ($poll instanceof PublicOpinion) {
-            $this->poll = $poll->load(['region', 'county', 'constituency', 'comments']);
+            $this->poll = count($relations) > 0 ? $poll->load($relations) : $poll;
         } else {
-            $this->poll = PublicOpinion::with(['region', 'county', 'constituency', 'comments'])->findOrFail($poll);
+            $query = PublicOpinion::query();
+            if (count($relations) > 0) {
+                $query->with($relations);
+            }
+            $this->poll = $query->findOrFail($poll);
         }
         $this->votedPollIds = session()->get('voted_polls', []);
 
         // Anti-fraud check: Check persistent cookie or DB IP record on load
         $cookieName = "voted_opinion_poll_{$this->poll->id}";
-        if (request()->hasCookie($cookieName) || PublicOpinionVote::where('public_opinion_id', $this->poll->id)->where('ip_address', request()->ip())->exists()) {
+        $hasIpVote = Schema::hasTable('public_opinion_votes') 
+            ? PublicOpinionVote::where('public_opinion_id', $this->poll->id)->where('ip_address', request()->ip())->exists()
+            : false;
+
+        if (request()->hasCookie($cookieName) || $hasIpVote) {
             if (!in_array($this->poll->id, $this->votedPollIds)) {
                 $this->votedPollIds[] = $this->poll->id;
                 session()->put('voted_polls', $this->votedPollIds);

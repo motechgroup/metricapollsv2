@@ -8,6 +8,7 @@ use App\Modules\PublicOpinion\Models\PublicOpinionVote;
 use App\Modules\PublicOpinion\Models\Region;
 use App\Modules\PublicOpinion\Models\County;
 use App\Modules\PublicOpinion\Models\Constituency;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Attributes\Title;
 
 #[Title('Live Polls & Results - Metrica Polls')]
@@ -61,17 +62,19 @@ class PublicOpinionPolls extends Component
             return;
         }
 
-        if (!$poll->allow_public_voting) {
+        if (Schema::hasColumn('public_opinions', 'allow_public_voting') && !$poll->allow_public_voting) {
             session()->flash('error', 'Public voting is disabled for this poll.');
             return;
         }
 
-        // Save Vote Record
-        PublicOpinionVote::create([
-            'public_opinion_id' => $pollId,
-            'ip_address' => request()->ip(),
-            'voted_option' => $optionName,
-        ]);
+        // Save Vote Record if table exists
+        if (Schema::hasTable('public_opinion_votes')) {
+            PublicOpinionVote::create([
+                'public_opinion_id' => $pollId,
+                'ip_address' => request()->ip(),
+                'voted_option' => $optionName,
+            ]);
+        }
 
         // Update counts in candidates_data JSON array if applicable
         if (is_array($poll->candidates_data)) {
@@ -96,12 +99,12 @@ class PublicOpinionPolls extends Component
 
     public function render()
     {
-        // Seed default dataset if missing
-        if (PublicOpinion::count() === 0) {
-            \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'GeographicAndPoliticalSeeder']);
-        }
+        $query = PublicOpinion::query();
 
-        $query = PublicOpinion::with(['region', 'county', 'constituency']);
+        // Safely check if geographic tables exist before eager loading
+        if (Schema::hasTable('regions') && Schema::hasTable('counties') && Schema::hasTable('constituencies')) {
+            $query->with(['region', 'county', 'constituency']);
+        }
 
         if ($this->statusFilter === 'live') {
             $query->where('status', 'live');
@@ -109,19 +112,19 @@ class PublicOpinionPolls extends Component
             $query->where('status', 'ended');
         }
 
-        if (!empty($this->selectedRegion)) {
+        if (!empty($this->selectedRegion) && Schema::hasColumn('public_opinions', 'region_id')) {
             $query->where('region_id', $this->selectedRegion);
         }
 
-        if (!empty($this->selectedCounty)) {
+        if (!empty($this->selectedCounty) && Schema::hasColumn('public_opinions', 'county_id')) {
             $query->where('county_id', $this->selectedCounty);
         }
 
-        if (!empty($this->selectedConstituency)) {
+        if (!empty($this->selectedConstituency) && Schema::hasColumn('public_opinions', 'constituency_id')) {
             $query->where('constituency_id', $this->selectedConstituency);
         }
 
-        if (!empty($this->selectedPosition)) {
+        if (!empty($this->selectedPosition) && Schema::hasColumn('public_opinions', 'position_title')) {
             $query->where('position_title', 'like', '%' . $this->selectedPosition . '%');
         }
 
@@ -131,11 +134,20 @@ class PublicOpinionPolls extends Component
 
         $polls = $query->latest()->get();
 
-        $activePollDetail = $this->selectedPollId ? PublicOpinion::with(['region', 'county', 'constituency'])->find($this->selectedPollId) : null;
+        $activePollDetail = null;
+        if ($this->selectedPollId) {
+            $detailQuery = PublicOpinion::query();
+            if (Schema::hasTable('regions')) {
+                $detailQuery->with(['region', 'county', 'constituency']);
+            }
+            $activePollDetail = $detailQuery->find($this->selectedPollId);
+        }
 
-        $regions = Region::orderBy('name')->get();
-        $counties = County::orderBy('name')->get();
-        $constituencies = $this->selectedCounty ? Constituency::where('county_id', $this->selectedCounty)->orderBy('name')->get() : collect();
+        $regions = Schema::hasTable('regions') ? Region::orderBy('name')->get() : collect();
+        $counties = Schema::hasTable('counties') ? County::orderBy('name')->get() : collect();
+        $constituencies = (Schema::hasTable('constituencies') && $this->selectedCounty) 
+            ? Constituency::where('county_id', $this->selectedCounty)->orderBy('name')->get() 
+            : collect();
 
         return view('PublicOpinion::livewire.public-opinion-polls', [
             'polls' => $polls,
