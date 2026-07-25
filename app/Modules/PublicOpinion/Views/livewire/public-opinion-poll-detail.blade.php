@@ -9,13 +9,21 @@
                 <span>Back to All Polls</span>
             </a>
 
-            <!-- Right Controls: Sample Size & Share Button -->
+            <!-- Right Controls: Sample Size, Share & Export PNG Flyer Button -->
             <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                 <!-- Sample Size Pill Badge -->
                 <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; font-family: monospace, sans-serif; color: #475569; background-color: #ffffff; padding: 9px 16px; border-radius: 12px; border: 1px solid #cbd5e1; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
                     <span style="color: #2563eb;">📊</span>
                     <span>Sample Size n={{ number_format($poll->votes_count) }}</span>
                 </div>
+
+                <!-- Export PNG Flyer Button -->
+                <button type="button" onclick="downloadPollFlyer()" style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; color: #ffffff; background-color: #2563eb; padding: 9px 18px; border-radius: 12px; border: none; box-shadow: 0 2px 4px rgba(37,99,235,0.2); cursor: pointer; transition: all 150ms ease;" class="hover:bg-blue-700">
+                    <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>📸 Export PNG Flyer</span>
+                </button>
 
                 <!-- Copy Shareable Link Button -->
                 <div x-data="{ copied: false }">
@@ -122,9 +130,20 @@
             $watermarkUrl = asset(\App\Models\Setting::getValue('site_logo', 'images/logo.png'));
         @endphp
 
-        <!-- Main Election Outer Container -->
-        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px;" class="p-4 sm:p-8 shadow-sm space-y-6 sm:space-y-8">
+        <!-- Main Election Outer Container (Target for PNG Flyer Export) -->
+        <div id="poll-infographic-flyer" style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 24px;" class="shadow-sm space-y-6 sm:space-y-8">
             
+            <!-- Flyer Brand Header Banner -->
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <img src="{{ asset(\App\Models\Setting::getValue('site_logo', 'images/logo.png')) }}" style="height: 24px; width: auto;" onerror="this.onerror=null; this.src='/images/favicon.png';">
+                    <span style="font-size: 13px; font-weight: 900; color: #0f172a; letter-spacing: 0.5px;">METRICA POLLS | PUBLIC OPINION FLYER</span>
+                </div>
+                <div style="font-size: 11px; font-weight: 700; color: #2563eb; font-family: monospace; background-color: #eff6ff; padding: 4px 10px; border-radius: 8px;">
+                    OFFICIAL POPULARITY INDEX REPORT
+                </div>
+            </div>
+
             <!-- Title Header Block -->
             <div style="text-align: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;" class="space-y-2 sm:space-y-3">
                 <h1 style="font-size: 22px; font-weight: 900; color: #0f172a; text-transform: uppercase; tracking-spacing: -0.5px;" class="sm:text-3xl">
@@ -149,7 +168,7 @@
 
             <!-- Subheader Controls & View Toggle Buttons (List vs Grid) -->
             <div style="display: flex; align-items: center; justify-content: flex-end; gap: 12px;">
-                <!-- List / Grid View Switcher Buttons (Matching Politrack Screenshot Top Right) -->
+                <!-- List / Grid View Switcher Buttons -->
                 <div style="display: flex; align-items: center; gap: 4px; background-color: #f1f5f9; padding: 4px; border-radius: 12px; border: 1px solid #e2e8f0;">
                     <!-- List View Button -->
                     <button wire:click="setViewMode('list')" 
@@ -173,7 +192,7 @@
 
             <!-- Candidate Rankings Layout: LIST VIEW vs GRID VIEW -->
             @if($viewMode === 'list')
-                <!-- LIST VIEW: Horizontal Full-Width Ranking Rows (Click candidate row to vote!) -->
+                <!-- LIST VIEW: Horizontal Full-Width Ranking Rows -->
                 <div style="display: flex; flex-direction: column; gap: 14px;">
                     @foreach($sortedCandidates as $rankIdx => $cand)
                         @php
@@ -201,7 +220,7 @@
 
                                 <!-- Avatar Photo -->
                                 <div style="width: 48px; height: 48px; min-width: 48px; border-radius: 50%; border: 2px solid #ffffff; overflow: hidden; background-color: #f1f5f9; box-shadow: 0 1px 3px rgba(0,0,0,0.1);" class="sm:w-14 sm:h-14 sm:min-w-[56px]">
-                                    <img src="{{ asset($cand['photo'] ?: '/images/favicon.png') }}" alt="{{ $cand['name'] }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='/favicon.png';">
+                                    <img src="{{ asset($cand['photo'] ?: '/images/favicon.png') }}" alt="{{ $cand['name'] }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='/images/favicon.png';">
                                 </div>
 
                                 <!-- Name & Party -->
@@ -234,7 +253,7 @@
                     @endforeach
                 </div>
             @else
-                <!-- GRID VIEW: 2 COLUMNS ON MOBILE (grid-cols-2) (Click candidate card to vote!) -->
+                <!-- GRID VIEW: 2 COLUMNS ON MOBILE -->
                 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;" class="sm:grid-cols-3 lg:grid-cols-5 sm:gap-4">
                     @foreach($sortedCandidates as $rankIdx => $cand)
                         @php
@@ -243,7 +262,7 @@
                             $theme = $getPolitrackTheme($rankIdx, $cand['name']);
                         @endphp
 
-                        <!-- Vertical Card Grid Box with Direct Click-to-Vote Action -->
+                        <!-- Vertical Card Grid Box -->
                         <div @if($canVote && !$isVoted) wire:click="vote('{{ $cand['name'] }}')" style="cursor: pointer;" title="Click to vote for {{ $cand['name'] }}" @endif
                              style="position: relative; border-radius: 18px; border: 1px solid {{ $theme['borderColor'] }}; background-color: {{ $theme['cardBgColor'] }}; padding: 14px 10px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: all 300ms ease; overflow: hidden;" class="sm:p-5 hover:shadow-lg group">
                             
@@ -257,7 +276,7 @@
 
                             <!-- Centered Candidate Photo -->
                             <div style="width: 72px; height: 72px; border-radius: 16px; border: 2.5px solid #ffffff; overflow: hidden; background-color: #f1f5f9; box-shadow: 0 3px 8px rgba(0,0,0,0.08); margin-top: 4px; margin-bottom: 10px; position: relative; z-index: 10;" class="sm:w-24 sm:h-24 sm:rounded-2xl sm:border-3 sm:mb-3">
-                                <img src="{{ asset($cand['photo'] ?: '/images/favicon.png') }}" alt="{{ $cand['name'] }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='/favicon.png';">
+                                <img src="{{ asset($cand['photo'] ?: '/images/favicon.png') }}" alt="{{ $cand['name'] }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='/images/favicon.png';">
                             </div>
 
                             <!-- Candidate Name & Party -->
@@ -297,7 +316,7 @@
                 </div>
             @endif
 
-            <!-- 1. HEAD-TO-HEAD BATTLE & SUB-COUNTY PREFERENCE BREAKDOWN -->
+            <!-- HEAD-TO-HEAD BATTLE & SUB-COUNTY PREFERENCE BREAKDOWN -->
             <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 20px;" class="shadow-xs space-y-6">
                 <div style="display: flex; align-items: center; justify-between; gap: 12px;" class="flex-col sm:flex-row">
                     <div style="display: flex; align-items: center; gap: 8px;">
@@ -343,37 +362,6 @@
                         </div>
                     </div>
                 @endif
-
-                <!-- Regional & Demographic Preference Breakdown Bars -->
-                <div class="space-y-3 pt-2">
-                    <h3 style="font-size: 14px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 6px;">
-                        <span>🗺️ Sub-County Preference Index</span>
-                    </h3>
-
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
-                        @php
-                            $subCounties = [
-                                ['name' => 'Kisii Central', 'lead' => $sortedCandidates[0]['name'] ?? 'Leader', 'pct' => 44.2, 'color' => '#2563eb'],
-                                ['name' => 'Kitutu Chache South', 'lead' => $sortedCandidates[0]['name'] ?? 'Leader', 'pct' => 41.8, 'color' => '#2563eb'],
-                                ['name' => 'Nyaribari Chache', 'lead' => $sortedCandidates[1]['name'] ?? 'Runner-up', 'pct' => 38.5, 'color' => '#9333ea'],
-                                ['name' => 'Bonchari', 'lead' => $sortedCandidates[0]['name'] ?? 'Leader', 'pct' => 39.1, 'color' => '#2563eb'],
-                            ];
-                        @endphp
-
-                        @foreach($subCounties as $sc)
-                            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px;" class="space-y-1.5">
-                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700;">
-                                    <span style="color: #0f172a;">{{ $sc['name'] }}</span>
-                                    <span style="color: {{ $sc['color'] }}; font-family: monospace;">{{ $sc['pct'] }}%</span>
-                                </div>
-                                <div style="font-size: 11px; color: #64748b;">Lead: {{ $sc['lead'] }}</div>
-                                <div style="width: 100%; height: 4px; background-color: #e2e8f0; border-radius: 9999px; overflow: hidden;">
-                                    <div style="height: 100%; width: {{ $sc['pct'] }}%; background-color: {{ $sc['color'] }};"></div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
             </div>
 
             <!-- Scope Meta Pills Bar -->
@@ -405,56 +393,53 @@
                 </div>
             </div>
 
-            <!-- 2. EXECUTIVE DATA POLL SUMMARY CARD -->
-            <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 20px;" class="shadow-xs space-y-6">
-                <div style="display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px;">
-                    <span style="font-size: 20px; color: #2563eb;">📋</span>
-                    <div>
-                        <h2 style="font-size: 16px; font-weight: 800; color: #0f172a;" class="sm:text-lg">Executive Data Poll Summary</h2>
-                        <p style="font-size: 12px; color: #64748b;">Certified statistical takeaways and methodology summary</p>
-                    </div>
-                </div>
-
-                <!-- Summary Grid Metrics -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
-                    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 14px;">
-                        <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Frontrunner Advantage</div>
-                        <div style="font-size: 18px; font-weight: 900; color: #2563eb; margin-top: 4px;">{{ $sortedCandidates[0]['name'] ?? 'Candidate' }}</div>
-                        <div style="font-size: 12px; color: #475569; margin-top: 2px;">Leads with <strong>{{ number_format($sortedCandidates[0]['votes'] ?? 0) }} votes</strong></div>
-                    </div>
-
-                    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 14px;">
-                        <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Sample Size & Confidence</div>
-                        <div style="font-size: 18px; font-weight: 900; color: #0f172a; margin-top: 4px;">n={{ number_format($poll->votes_count) }}</div>
-                        <div style="font-size: 12px; color: #475569; margin-top: 2px;">95% Confidence Level (±1.8% MoE)</div>
-                    </div>
-
-                    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 14px;">
-                        <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Swing & Undecided Factor</div>
-                        <div style="font-size: 18px; font-weight: 900; color: #d97706; margin-top: 4px;">5.4% Undecided</div>
-                        <div style="font-size: 12px; color: #475569; margin-top: 2px;">Key decisive group for final turnout</div>
-                    </div>
-                </div>
-
-
-                <!-- Analytical Takeaways List -->
-                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 16px;" class="space-y-2 text-xs text-slate-700 leading-relaxed">
-                    <h4 style="font-size: 13px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">Key Analytical Highlights:</h4>
-                    <div style="display: flex; items-start: gap: 8px;">
-                        <span style="color: #2563eb;">•</span>
-                        <span><strong>Strong Lead Retention:</strong> {{ $sortedCandidates[0]['name'] ?? 'The leader' }} maintains a decisive command across major urban wards.</span>
-                    </div>
-                    <div style="display: flex; items-start: gap: 8px;">
-                        <span style="color: #9333ea;">•</span>
-                        <span><strong>Competitive Second Place:</strong> {{ $sortedCandidates[1]['name'] ?? 'Runner-up' }} shows strong momentum in constituency strongholds.</span>
-                    </div>
-                    <div style="display: flex; items-start: gap: 8px;">
-                        <span style="color: #059669;">•</span>
-                        <span><strong>High Respondent Engagement:</strong> Polling data certified with zero duplicate IP validations.</span>
-                    </div>
-                </div>
+            <!-- Certified Flyer Verification Footer -->
+            <div style="border-top: 2px solid #f1f5f9; padding-top: 14px; margin-top: 20px; display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: #64748b; font-weight: 700;">
+                <div>Certified Metrica Polls Public Intelligence Report • www.metricapolls.com</div>
+                <div>Sample Size n={{ number_format($poll->votes_count) }}</div>
             </div>
 
         </div>
     </div>
 </div>
+
+<!-- HTML2Canvas CDN for High-Resolution PNG Flyer Export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+    function downloadPollFlyer() {
+        const flyerEl = document.getElementById('poll-infographic-flyer');
+        if (!flyerEl) return;
+
+        const btn = event.currentTarget;
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '⏳ Generating PNG...';
+        btn.disabled = true;
+
+        html2canvas(flyerEl, {
+            scale: 2, // High resolution output
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            logging: false
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'Metrica_Poll_Flyer_Poll_{{ $poll->id }}.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            btn.innerHTML = '✅ PNG Downloaded!';
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+            }, 2500);
+        }).catch(err => {
+            console.error('PNG export error:', err);
+            btn.innerHTML = '⚠️ Export Failed';
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+            }, 2500);
+        });
+    }
+</script>
