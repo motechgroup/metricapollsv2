@@ -1,7 +1,7 @@
 <div class="py-6 sm:py-16 bg-slate-50 flex-grow min-h-screen font-sans">
     <div style="width: 95%; max-width: 1200px; margin: 0 auto;" class="space-y-6 sm:space-y-8">
         
-        <!-- Navigation & Share Header Bar with Self-Contained Styles -->
+        <!-- Navigation & Share Header Bar -->
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
             <!-- Back to All Polls Button -->
             <a href="{{ route('public.opinion') }}" style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #1e293b; background-color: #ffffff; padding: 10px 18px; border-radius: 12px; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.06); text-decoration: none; transition: all 150ms ease;">
@@ -61,12 +61,12 @@
                 return ($b['votes'] ?? 0) <=> ($a['votes'] ?? 0);
             });
 
-            // Exact Politrack Color Palette & Card Background Fill mapping
+            // Exact Politrack Color Palette
             $getPolitrackTheme = function($rankIdx, $candidateName = '') {
                 $nameLower = strtolower($candidateName);
                 if (str_contains($nameLower, 'undecided')) {
                     return [
-                        'solidColor' => '#2563EB', // Blue
+                        'solidColor' => '#2563EB',
                         'cardBgColor' => 'rgba(37, 99, 235, 0.12)',
                         'fillRgba' => 'rgba(37, 99, 235, 0.22)',
                         'borderColor' => 'rgba(37, 99, 235, 0.3)',
@@ -74,7 +74,7 @@
                 }
                 if (str_contains($nameLower, 'other')) {
                     return [
-                        'solidColor' => '#D97706', // Amber/Yellow
+                        'solidColor' => '#D97706',
                         'cardBgColor' => 'rgba(217, 119, 6, 0.12)',
                         'fillRgba' => 'rgba(217, 119, 6, 0.22)',
                         'borderColor' => 'rgba(217, 119, 6, 0.3)',
@@ -83,43 +83,43 @@
 
                 return match($rankIdx) {
                     0 => [
-                        'solidColor' => '#2563EB', // #1 Blue
+                        'solidColor' => '#2563EB',
                         'cardBgColor' => 'rgba(37, 99, 235, 0.12)',
                         'fillRgba' => 'rgba(37, 99, 235, 0.22)',
                         'borderColor' => 'rgba(37, 99, 235, 0.3)',
                     ],
                     1 => [
-                        'solidColor' => '#9333EA', // #2 Purple
+                        'solidColor' => '#9333EA',
                         'cardBgColor' => 'rgba(147, 51, 234, 0.12)',
                         'fillRgba' => 'rgba(147, 51, 234, 0.22)',
                         'borderColor' => 'rgba(147, 51, 234, 0.3)',
                     ],
                     2 => [
-                        'solidColor' => '#10B981', // #3 Green
+                        'solidColor' => '#10B981',
                         'cardBgColor' => 'rgba(16, 185, 129, 0.12)',
                         'fillRgba' => 'rgba(16, 185, 129, 0.22)',
                         'borderColor' => 'rgba(16, 185, 129, 0.3)',
                     ],
                     3 => [
-                        'solidColor' => '#F59E0B', // #4 Orange
+                        'solidColor' => '#F59E0B',
                         'cardBgColor' => 'rgba(245, 158, 11, 0.12)',
                         'fillRgba' => 'rgba(245, 158, 11, 0.22)',
                         'borderColor' => 'rgba(245, 158, 11, 0.3)',
                     ],
                     4 => [
-                        'solidColor' => '#EF4444', // #5 Red
+                        'solidColor' => '#EF4444',
                         'cardBgColor' => 'rgba(239, 68, 68, 0.12)',
                         'fillRgba' => 'rgba(239, 68, 68, 0.22)',
                         'borderColor' => 'rgba(239, 68, 68, 0.3)',
                     ],
                     5 => [
-                        'solidColor' => '#2563EB', // #6 Blue
+                        'solidColor' => '#2563EB',
                         'cardBgColor' => 'rgba(37, 99, 235, 0.12)',
                         'fillRgba' => 'rgba(37, 99, 235, 0.22)',
                         'borderColor' => 'rgba(37, 99, 235, 0.3)',
                     ],
                     default => [
-                        'solidColor' => '#D97706', // #7 Amber
+                        'solidColor' => '#D97706',
                         'cardBgColor' => 'rgba(217, 119, 6, 0.12)',
                         'fillRgba' => 'rgba(217, 119, 6, 0.22)',
                         'borderColor' => 'rgba(217, 119, 6, 0.3)',
@@ -130,20 +130,9 @@
             $watermarkUrl = asset(\App\Models\Setting::getValue('site_logo', 'images/logo.png'));
         @endphp
 
-        <!-- Main Election Outer Container (Target for PNG Flyer Export) -->
-        <div id="poll-infographic-flyer" style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 24px;" class="shadow-sm space-y-6 sm:space-y-8">
+        <!-- Main Live Interactive Election Card Container -->
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 24px;" class="shadow-sm space-y-6 sm:space-y-8">
             
-            <!-- Flyer Brand Header Banner -->
-            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 12px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <img src="{{ asset(\App\Models\Setting::getValue('site_logo', 'images/logo.png')) }}" style="height: 24px; width: auto;" onerror="this.onerror=null; this.src='/images/favicon.png';">
-                    <span style="font-size: 13px; font-weight: 900; color: #0f172a; letter-spacing: 0.5px;">METRICA POLLS | PUBLIC OPINION FLYER</span>
-                </div>
-                <div style="font-size: 11px; font-weight: 700; color: #2563eb; font-family: monospace; background-color: #eff6ff; padding: 4px 10px; border-radius: 8px;">
-                    OFFICIAL POPULARITY INDEX REPORT
-                </div>
-            </div>
-
             <!-- Title Header Block -->
             <div style="text-align: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;" class="space-y-2 sm:space-y-3">
                 <h1 style="font-size: 22px; font-weight: 900; color: #0f172a; text-transform: uppercase; tracking-spacing: -0.5px;" class="sm:text-3xl">
@@ -199,13 +188,14 @@
                             $cVotes = $cand['votes'] ?? 0;
                             $pct = $poll->votes_count > 0 ? round(($cVotes / $poll->votes_count) * 100, 1) : 0;
                             $theme = $getPolitrackTheme($rankIdx, $cand['name']);
+                            $cPhoto = !empty($cand['photo']) ? $cand['photo'] : '/images/favicon.png';
                         @endphp
 
-                        <!-- Candidate Horizontal Row with Direct Click-to-Vote Action -->
+                        <!-- Candidate Horizontal Row -->
                         <div @if($canVote && !$isVoted) wire:click="vote('{{ $cand['name'] }}')" style="cursor: pointer;" title="Click to vote for {{ $cand['name'] }}" @endif 
                              style="position: relative; width: 100%; min-height: 84px; border-radius: 18px; border: 1px solid {{ $theme['borderColor'] }}; background-color: {{ $theme['cardBgColor'] }}; display: flex; align-items: center; justify-content: space-between; overflow: hidden; padding: 12px 16px; transition: all 300ms ease;" class="hover:shadow-md group">
                             
-                            <!-- Repeating Logo Background Watermark Pattern Layer -->
+                            <!-- Watermark Layer -->
                             <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; pointer-events: none; opacity: 0.04; background-image: url('{{ $watermarkUrl }}'); background-repeat: repeat; background-size: 140px auto; background-position: center; z-index: 1;"></div>
 
                             <!-- Translucent Progress Fill Bar -->
@@ -213,24 +203,21 @@
 
                             <!-- Left Content: Rank Badge + Avatar + Name & Party -->
                             <div style="display: flex; align-items: center; gap: 12px; position: relative; z-index: 10; min-width: 200px;" class="sm:gap-4 sm:min-w-[280px]">
-                                <!-- Rank Badge (#1, #2, #3...) -->
                                 <div style="width: 34px; height: 34px; min-width: 34px; border-radius: 50%; background-color: {{ $theme['solidColor'] }}; color: #ffffff; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.15);" class="sm:w-10 sm:h-10 sm:min-w-[40px] sm:text-sm">
                                     #{{ $rankIdx + 1 }}
                                 </div>
 
-                                <!-- Avatar Photo -->
                                 <div style="width: 48px; height: 48px; min-width: 48px; border-radius: 50%; border: 2px solid #ffffff; overflow: hidden; background-color: #f1f5f9; box-shadow: 0 1px 3px rgba(0,0,0,0.1);" class="sm:w-14 sm:h-14 sm:min-w-[56px]">
-                                    <img src="{{ asset($cand['photo'] ?: '/images/favicon.png') }}" alt="{{ $cand['name'] }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='/images/favicon.png';">
+                                    <img src="{{ asset($cPhoto) }}" alt="{{ $cand['name'] }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='/images/favicon.png';">
                                 </div>
 
-                                <!-- Name & Party -->
                                 <div>
                                     <div style="font-weight: 800; font-size: 15px; color: #0f172a; line-height: 1.2;" class="sm:text-lg">{{ $cand['name'] }}</div>
                                     <div style="font-weight: 700; font-size: 11px; color: #64748b; text-transform: uppercase; margin-top: 2px; letter-spacing: 0.5px;" class="sm:text-xs">{{ $cand['party_name'] ?? 'NO PARTY' }}</div>
                                 </div>
                             </div>
 
-                            <!-- Right Content: Score Percentage & Votes / Click-to-Vote Prompt -->
+                            <!-- Right Content: Score Percentage & Votes (No Voted Badge) -->
                             <div style="display: flex; align-items: center; gap: 12px; position: relative; z-index: 10; text-align: right; margin-left: auto;">
                                 <div>
                                     <div style="font-weight: 900; font-family: monospace, sans-serif; font-size: 26px; color: {{ $theme['solidColor'] }}; line-height: 1;" class="sm:text-3xl">
@@ -243,10 +230,6 @@
                                     <button wire:click.stop="vote('{{ $cand['name'] }}')" style="background-color: #0f172a; color: #ffffff; font-weight: 700; font-size: 12px; padding: 6px 14px; border-radius: 10px; border: none; cursor: pointer; transition: background-color 150ms ease;" class="hover:bg-black sm:text-xs sm:px-4 sm:py-2 sm:rounded-xl">
                                         🗳️ Vote
                                     </button>
-                                @elseif($isVoted)
-                                    <span style="font-size: 11px; font-weight: 700; color: #059669; background-color: #d1fae5; padding: 4px 10px; border-radius: 8px;">
-                                        ✓ Voted
-                                    </span>
                                 @endif
                             </div>
                         </div>
@@ -260,23 +243,24 @@
                             $cVotes = $cand['votes'] ?? 0;
                             $pct = $poll->votes_count > 0 ? round(($cVotes / $poll->votes_count) * 100, 1) : 0;
                             $theme = $getPolitrackTheme($rankIdx, $cand['name']);
+                            $cPhoto = !empty($cand['photo']) ? $cand['photo'] : '/images/favicon.png';
                         @endphp
 
                         <!-- Vertical Card Grid Box -->
                         <div @if($canVote && !$isVoted) wire:click="vote('{{ $cand['name'] }}')" style="cursor: pointer;" title="Click to vote for {{ $cand['name'] }}" @endif
                              style="position: relative; border-radius: 18px; border: 1px solid {{ $theme['borderColor'] }}; background-color: {{ $theme['cardBgColor'] }}; padding: 14px 10px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: all 300ms ease; overflow: hidden;" class="sm:p-5 hover:shadow-lg group">
                             
-                            <!-- Repeating Logo Background Watermark Pattern Layer -->
+                            <!-- Watermark Layer -->
                             <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; pointer-events: none; opacity: 0.04; background-image: url('{{ $watermarkUrl }}'); background-repeat: repeat; background-size: 120px auto; background-position: center; z-index: 1;"></div>
 
-                            <!-- Top Right Rank Badge (#1, #2, #3...) -->
+                            <!-- Top Right Rank Badge -->
                             <div style="position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; border-radius: 50%; background-color: {{ $theme['solidColor'] }}; color: #ffffff; font-weight: 900; font-size: 11px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.15); z-index: 10;" class="sm:w-8 sm:h-8 sm:top-3 sm:right-3 sm:text-xs">
                                 #{{ $rankIdx + 1 }}
                             </div>
 
                             <!-- Centered Candidate Photo -->
                             <div style="width: 72px; height: 72px; border-radius: 16px; border: 2.5px solid #ffffff; overflow: hidden; background-color: #f1f5f9; box-shadow: 0 3px 8px rgba(0,0,0,0.08); margin-top: 4px; margin-bottom: 10px; position: relative; z-index: 10;" class="sm:w-24 sm:h-24 sm:rounded-2xl sm:border-3 sm:mb-3">
-                                <img src="{{ asset($cand['photo'] ?: '/images/favicon.png') }}" alt="{{ $cand['name'] }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='/images/favicon.png';">
+                                <img src="{{ asset($cPhoto) }}" alt="{{ $cand['name'] }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='/images/favicon.png';">
                             </div>
 
                             <!-- Candidate Name & Party -->
@@ -297,7 +281,7 @@
                                 {{ number_format($cVotes) }} votes
                             </div>
 
-                            <!-- Bottom Horizontal Progress Line -->
+                            <!-- Progress Line -->
                             <div style="width: 80%; height: 5px; background-color: rgba(0,0,0,0.08); border-radius: 9999px; overflow: hidden; margin-top: auto; position: relative; z-index: 10;">
                                 <div style="height: 100%; width: {{ $pct }}%; background-color: {{ $theme['solidColor'] }}; border-radius: 9999px; transition: width 900ms ease-out;"></div>
                             </div>
@@ -306,10 +290,6 @@
                                 <button wire:click.stop="vote('{{ $cand['name'] }}')" style="background-color: #0f172a; color: #ffffff; font-weight: 700; font-size: 11px; padding: 5px 10px; border-radius: 8px; border: none; cursor: pointer; margin-top: 8px; width: 100%; position: relative; z-index: 10;" class="hover:bg-black sm:text-xs sm:py-1.5 sm:rounded-xl">
                                     🗳️ Vote
                                 </button>
-                            @elseif($isVoted)
-                                <div style="font-size: 10px; font-weight: 700; color: #059669; background-color: #d1fae5; padding: 3px 8px; border-radius: 6px; margin-top: 6px; position: relative; z-index: 10;">
-                                    ✓ Voted
-                                </div>
                             @endif
                         </div>
                     @endforeach
@@ -393,13 +373,144 @@
                 </div>
             </div>
 
-            <!-- Certified Flyer Verification Footer -->
-            <div style="border-top: 2px solid #f1f5f9; padding-top: 14px; margin-top: 20px; display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: #64748b; font-weight: 700;">
-                <div>Certified Metrica Polls Public Intelligence Report • www.metricapolls.com</div>
-                <div>Sample Size n={{ number_format($poll->votes_count) }}</div>
-            </div>
-
         </div>
+
+        <!-- ========================================================================= -->
+        <!-- DEDICATED SOCIAL MEDIA INFOGRAPHIC FLYER (Export Target for html2canvas) -->
+        <!-- ========================================================================= -->
+        <div style="position: absolute; left: -9999px; top: -9999px; width: 800px; background-color: #ffffff; font-family: system-ui, -apple-system, sans-serif;" id="poll-infographic-flyer">
+            <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 36px 40px; border-radius: 28px; color: #ffffff; border: 1px solid #334155; position: relative; overflow: hidden;" class="space-y-6">
+                
+                <!-- Watermark Background Layer -->
+                <div style="position: absolute; inset: 0; pointer-events: none; opacity: 0.05; background-image: url('{{ $watermarkUrl }}'); background-repeat: repeat; background-size: 160px auto;"></div>
+
+                <!-- 1. CLEAN CENTERED HEADER WITH SITE LOGO AT THE CENTRE -->
+                <div style="text-align: center; position: relative; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 22px;" class="space-y-3">
+                    <!-- Centered Site Logo -->
+                    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+                        <img src="{{ asset(\App\Models\Setting::getValue('site_logo', 'images/logo.png')) }}" style="height: 42px; width: auto; object-fit: contain;" onerror="this.onerror=null; this.src='/images/favicon.png';">
+                    </div>
+
+                    <!-- Clean Poll Title Centered -->
+                    <h1 style="font-size: 24px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: -0.3px; line-height: 1.35; margin: 0 auto; max-width: 720px;">
+                        {{ $poll->topic }}
+                    </h1>
+
+                    <!-- Category & Location Scope Pill -->
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 12px; font-weight: 700; margin-top: 12px;">
+                        <span style="background-color: #2563eb; color: #ffffff; padding: 6px 16px; border-radius: 20px;">
+                            {{ $poll->position_title ?: 'Public Opinion Poll' }}
+                        </span>
+
+                        <span style="background-color: rgba(255,255,255,0.12); color: #38bdf8; padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15);">
+                            📍 
+                            @if($poll->constituency)
+                                {{ $poll->constituency->name }} Constituency, {{ $poll->county->name ?? '' }}
+                            @elseif($poll->county)
+                                {{ $poll->county->name }} County
+                            @elseif($poll->region)
+                                {{ $poll->region->name }} Region
+                            @else
+                                National Target
+                            @endif
+                        </span>
+
+                        <span style="background-color: rgba(255,255,255,0.12); color: #f59e0b; padding: 6px 16px; border-radius: 20px; font-family: monospace;">
+                            📊 n={{ number_format($poll->votes_count) }} votes
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 2. CANDIDATES RANKING LIST (ALWAYS SHOWS CLEAN LIST LAYOUT, NO ICONS/SWITCHERS) -->
+                <div style="display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 10;">
+                    @foreach($sortedCandidates as $rankIdx => $cand)
+                        @php
+                            $cVotes = $cand['votes'] ?? 0;
+                            $pct = $poll->votes_count > 0 ? round(($cVotes / $poll->votes_count) * 100, 1) : 0;
+                            $theme = $getPolitrackTheme($rankIdx, $cand['name']);
+                            $cPhoto = !empty($cand['photo']) ? $cand['photo'] : '/images/favicon.png';
+                        @endphp
+
+                        <!-- Candidate List Row (Flyer Format - Always List View) -->
+                        <div style="position: relative; width: 100%; min-height: 76px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.15); background-color: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; overflow: hidden; padding: 12px 20px;">
+                            
+                            <!-- Translucent Fill Bar -->
+                            <div style="position: absolute; top: 0; bottom: 0; left: 0; width: {{ $pct }}%; background-color: {{ $theme['solidColor'] }}33; border-right: 3.5px solid {{ $theme['solidColor'] }}; pointer-events: none; border-radius: 18px;"></div>
+
+                            <!-- Left: Rank Badge + Avatar + Name & Party -->
+                            <div style="display: flex; align-items: center; gap: 14px; position: relative; z-index: 10;">
+                                <!-- Rank Badge -->
+                                <div style="width: 38px; height: 38px; border-radius: 50%; background-color: {{ $theme['solidColor'] }}; color: #ffffff; font-weight: 900; font-size: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                                    #{{ $rankIdx + 1 }}
+                                </div>
+
+                                <!-- Candidate Headshot -->
+                                <div style="width: 50px; height: 50px; border-radius: 50%; border: 2.5px solid #ffffff; overflow: hidden; background-color: #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                    <img src="{{ asset($cPhoto) }}" alt="{{ $cand['name'] }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='/images/favicon.png';">
+                                </div>
+
+                                <!-- Name & Party -->
+                                <div>
+                                    <div style="font-weight: 800; font-size: 17px; color: #ffffff; line-height: 1.2;">{{ $cand['name'] }}</div>
+                                    <div style="font-weight: 700; font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-top: 2px; letter-spacing: 0.5px;">{{ $cand['party_name'] ?? 'INDEPENDENT' }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Percentage & Vote Tallies (No Voted Badge) -->
+                            <div style="position: relative; z-index: 10; text-align: right;">
+                                <div style="font-weight: 900; font-family: monospace, sans-serif; font-size: 30px; color: {{ $theme['solidColor'] }}; line-height: 1;">
+                                    {{ $pct }}%
+                                </div>
+                                <div style="font-weight: 600; font-size: 11px; color: #cbd5e1; margin-top: 3px; font-family: monospace, sans-serif;">{{ number_format($cVotes) }} votes</div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- 3. SUMMARY OF THE POLL -->
+                <div style="background-color: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 18px; position: relative; z-index: 10; margin-top: 16px;" class="space-y-2">
+                    <div style="font-size: 14px; font-weight: 800; color: #f8fafc; display: flex; align-items: center; justify-content: space-between;">
+                        <span>📋 Executive Polling Summary & Takeaways</span>
+                        @if(count($sortedCandidates) >= 2)
+                            @php
+                                $top1 = $sortedCandidates[0];
+                                $top2 = $sortedCandidates[1];
+                                $top1Pct = $poll->votes_count > 0 ? round((($top1['votes'] ?? 0) / $poll->votes_count) * 100, 1) : 0;
+                                $top2Pct = $poll->votes_count > 0 ? round((($top2['votes'] ?? 0) / $poll->votes_count) * 100, 1) : 0;
+                                $leadMargin = round($top1Pct - $top2Pct, 1);
+                            @endphp
+                            <span style="color: #4ade80; font-size: 13px; font-weight: 800;">🔥 Lead Margin: +{{ $leadMargin }}%</span>
+                        @endif
+                    </div>
+
+                    <div style="font-size: 12px; color: #cbd5e1; line-height: 1.6;">
+                        • Frontrunner <strong>{{ $sortedCandidates[0]['name'] ?? 'Candidate' }}</strong> commands top popularity index. <br>
+                        • Certified statistical sample size <strong>n={{ number_format($poll->votes_count) }} respondents</strong> evaluated with zero bot/duplicate IP validations.
+                    </div>
+                </div>
+
+                <!-- 4. FOOTER WITH SITE URL, SOCIAL ICONS AND DISCLAIMER -->
+                <div style="border-top: 1px solid rgba(255,255,255,0.15); padding-top: 18px; margin-top: 22px; text-align: center; position: relative; z-index: 10;" class="space-y-2">
+                    <!-- Centered Website URL & Social Handles -->
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 16px; font-size: 13px; font-weight: 800; color: #38bdf8;">
+                        <span>🌐 www.metricapolls.com</span>
+                        <span>•</span>
+                        <span>FB: MetricaPolls</span>
+                        <span>•</span>
+                        <span>X: @MetricaPolls</span>
+                        <span>•</span>
+                        <span>IG: @metricapolls</span>
+                    </div>
+
+                    <!-- Disclaimer Notice -->
+                    <div style="font-size: 10px; color: #94a3b8; line-height: 1.4; max-width: 720px; margin: 8px auto 0 auto;">
+                        Disclaimer: This public opinion poll is conducted independently by Metrica Polls. Results reflect sample population sentiment at the time of polling.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -417,10 +528,10 @@
         btn.disabled = true;
 
         html2canvas(flyerEl, {
-            scale: 2, // High resolution output
+            scale: 2, // High DPI resolution output
             useCORS: true,
             allowTaint: true,
-            backgroundColor: '#ffffff',
+            backgroundColor: null,
             logging: false
         }).then(canvas => {
             const link = document.createElement('a');
