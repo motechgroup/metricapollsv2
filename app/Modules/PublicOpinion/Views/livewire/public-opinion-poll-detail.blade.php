@@ -22,7 +22,7 @@
                     <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    <span>📸 Export PNG Flyer</span>
+                    <span>📸 Export PNG Flyer ({{ strtoupper($viewMode) }})</span>
                 </button>
 
                 <!-- Copy Shareable Link Button -->
@@ -217,7 +217,7 @@
                                 </div>
                             </div>
 
-                            <!-- Right Content: Score Percentage & Votes (No Voted Badge) -->
+                            <!-- Right Content: Score Percentage & Votes -->
                             <div style="display: flex; align-items: center; gap: 12px; position: relative; z-index: 10; text-align: right; margin-left: auto;">
                                 <div>
                                     <div style="font-weight: 900; font-family: monospace, sans-serif; font-size: 26px; color: {{ $theme['solidColor'] }}; line-height: 1;" class="sm:text-3xl">
@@ -378,31 +378,33 @@
         <!-- ========================================================================= -->
         <!-- DEDICATED SOCIAL MEDIA INFOGRAPHIC FLYER (Export Target for html2canvas) -->
         <!-- ========================================================================= -->
-        <div style="position: absolute; left: -9999px; top: -9999px; width: 800px; background-color: #ffffff; font-family: system-ui, -apple-system, sans-serif;" id="poll-infographic-flyer">
+        <div style="position: absolute; left: -9999px; top: -9999px; width: 840px; background-color: #ffffff; font-family: system-ui, -apple-system, sans-serif;" id="poll-infographic-flyer">
             <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 36px 40px; border-radius: 28px; color: #ffffff; border: 1px solid #334155; position: relative; overflow: hidden;" class="space-y-6">
                 
                 <!-- Watermark Background Layer -->
                 <div style="position: absolute; inset: 0; pointer-events: none; opacity: 0.05; background-image: url('{{ $watermarkUrl }}'); background-repeat: repeat; background-size: 160px auto;"></div>
 
-                <!-- 1. CLEAN CENTERED HEADER WITH SITE LOGO AT THE CENTRE -->
+                <!-- 1. STYLED CENTERED HEADER WITH BRIGHT LOGO BADGE -->
                 <div style="text-align: center; position: relative; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 22px;" class="space-y-3">
-                    <!-- Centered Site Logo -->
-                    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
-                        <img src="{{ asset(\App\Models\Setting::getValue('site_logo', 'images/logo.png')) }}" style="height: 42px; width: auto; object-fit: contain;" onerror="this.onerror=null; this.src='/images/favicon.png';">
+                    <!-- Bright Centered Logo Badge Container -->
+                    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px;">
+                        <div style="background-color: #ffffff; padding: 10px 28px; border-radius: 18px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2);">
+                            <img src="{{ asset(\App\Models\Setting::getValue('site_logo', 'images/logo.png')) }}" style="height: 38px; width: auto; object-fit: contain;" onerror="this.onerror=null; this.src='/images/favicon.png';">
+                        </div>
                     </div>
 
                     <!-- Clean Poll Title Centered -->
-                    <h1 style="font-size: 24px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: -0.3px; line-height: 1.35; margin: 0 auto; max-width: 720px;">
+                    <h1 style="font-size: 26px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: -0.2px; line-height: 1.3; margin: 0 auto; max-width: 740px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
                         {{ $poll->topic }}
                     </h1>
 
-                    <!-- Category & Location Scope Pill -->
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 12px; font-weight: 700; margin-top: 12px;">
-                        <span style="background-color: #2563eb; color: #ffffff; padding: 6px 16px; border-radius: 20px;">
+                    <!-- Category & Location Scope Pills -->
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 12px; font-weight: 700; margin-top: 14px;">
+                        <span style="background-color: #2563eb; color: #ffffff; padding: 6px 16px; border-radius: 20px; box-shadow: 0 2px 4px rgba(37,99,235,0.3);">
                             {{ $poll->position_title ?: 'Public Opinion Poll' }}
                         </span>
 
-                        <span style="background-color: rgba(255,255,255,0.12); color: #38bdf8; padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15);">
+                        <span style="background-color: rgba(255,255,255,0.1); color: #38bdf8; padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(56,189,248,0.3);">
                             📍 
                             @if($poll->constituency)
                                 {{ $poll->constituency->name }} Constituency, {{ $poll->county->name ?? '' }}
@@ -415,57 +417,99 @@
                             @endif
                         </span>
 
-                        <span style="background-color: rgba(255,255,255,0.12); color: #f59e0b; padding: 6px 16px; border-radius: 20px; font-family: monospace;">
+                        <span style="background-color: rgba(255,255,255,0.1); color: #f59e0b; padding: 6px 16px; border-radius: 20px; font-family: monospace, sans-serif; border: 1px solid rgba(245,158,11,0.3);">
                             📊 n={{ number_format($poll->votes_count) }} votes
                         </span>
                     </div>
                 </div>
 
-                <!-- 2. CANDIDATES RANKING LIST (ALWAYS SHOWS CLEAN LIST LAYOUT, NO ICONS/SWITCHERS) -->
-                <div style="display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 10;">
-                    @foreach($sortedCandidates as $rankIdx => $cand)
-                        @php
-                            $cVotes = $cand['votes'] ?? 0;
-                            $pct = $poll->votes_count > 0 ? round(($cVotes / $poll->votes_count) * 100, 1) : 0;
-                            $theme = $getPolitrackTheme($rankIdx, $cand['name']);
-                            $cPhoto = !empty($cand['photo']) ? $cand['photo'] : '/images/favicon.png';
-                        @endphp
+                <!-- 2. CANDIDATES RANKING LAYOUT (DYNAMIC: LIST OR GRID BASED ON USER SELECTION) -->
+                @if($viewMode === 'list')
+                    <!-- LIST VIEW FLYER LAYOUT -->
+                    <div style="display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 10;">
+                        @foreach($sortedCandidates as $rankIdx => $cand)
+                            @php
+                                $cVotes = $cand['votes'] ?? 0;
+                                $pct = $poll->votes_count > 0 ? round(($cVotes / $poll->votes_count) * 100, 1) : 0;
+                                $theme = $getPolitrackTheme($rankIdx, $cand['name']);
+                                $cPhoto = !empty($cand['photo']) ? $cand['photo'] : '/images/favicon.png';
+                            @endphp
 
-                        <!-- Candidate List Row (Flyer Format - Always List View) -->
-                        <div style="position: relative; width: 100%; min-height: 76px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.15); background-color: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; overflow: hidden; padding: 12px 20px;">
-                            
-                            <!-- Translucent Fill Bar -->
-                            <div style="position: absolute; top: 0; bottom: 0; left: 0; width: {{ $pct }}%; background-color: {{ $theme['solidColor'] }}33; border-right: 3.5px solid {{ $theme['solidColor'] }}; pointer-events: none; border-radius: 18px;"></div>
+                            <div style="position: relative; width: 100%; min-height: 76px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.15); background-color: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; overflow: hidden; padding: 12px 20px;">
+                                <div style="position: absolute; top: 0; bottom: 0; left: 0; width: {{ $pct }}%; background-color: {{ $theme['solidColor'] }}33; border-right: 3.5px solid {{ $theme['solidColor'] }}; pointer-events: none; border-radius: 18px;"></div>
 
-                            <!-- Left: Rank Badge + Avatar + Name & Party -->
-                            <div style="display: flex; align-items: center; gap: 14px; position: relative; z-index: 10;">
-                                <!-- Rank Badge -->
-                                <div style="width: 38px; height: 38px; border-radius: 50%; background-color: {{ $theme['solidColor'] }}; color: #ffffff; font-weight: 900; font-size: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                                <div style="display: flex; align-items: center; gap: 14px; position: relative; z-index: 10;">
+                                    <div style="width: 38px; height: 38px; border-radius: 50%; background-color: {{ $theme['solidColor'] }}; color: #ffffff; font-weight: 900; font-size: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                                        #{{ $rankIdx + 1 }}
+                                    </div>
+
+                                    <div style="width: 50px; height: 50px; border-radius: 50%; border: 2.5px solid #ffffff; overflow: hidden; background-color: #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                        <img src="{{ asset($cPhoto) }}" alt="{{ $cand['name'] }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='/images/favicon.png';">
+                                    </div>
+
+                                    <div>
+                                        <div style="font-weight: 800; font-size: 17px; color: #ffffff; line-height: 1.2;">{{ $cand['name'] }}</div>
+                                        <div style="font-weight: 700; font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-top: 2px; letter-spacing: 0.5px;">{{ $cand['party_name'] ?? 'INDEPENDENT' }}</div>
+                                    </div>
+                                </div>
+
+                                <div style="position: relative; z-index: 10; text-align: right;">
+                                    <div style="font-weight: 900; font-family: monospace, sans-serif; font-size: 30px; color: {{ $theme['solidColor'] }}; line-height: 1;">
+                                        {{ $pct }}%
+                                    </div>
+                                    <div style="font-weight: 600; font-size: 11px; color: #cbd5e1; margin-top: 3px; font-family: monospace, sans-serif;">{{ number_format($cVotes) }} votes</div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <!-- GRID VIEW FLYER LAYOUT -->
+                    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; position: relative; z-index: 10;">
+                        @foreach($sortedCandidates as $rankIdx => $cand)
+                            @php
+                                $cVotes = $cand['votes'] ?? 0;
+                                $pct = $poll->votes_count > 0 ? round(($cVotes / $poll->votes_count) * 100, 1) : 0;
+                                $theme = $getPolitrackTheme($rankIdx, $cand['name']);
+                                $cPhoto = !empty($cand['photo']) ? $cand['photo'] : '/images/favicon.png';
+                            @endphp
+
+                            <div style="position: relative; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); background-color: rgba(255,255,255,0.06); padding: 18px 12px; display: flex; flex-direction: column; align-items: center; text-align: center; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                                <!-- Top Right Rank Badge -->
+                                <div style="position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 50%; background-color: {{ $theme['solidColor'] }}; color: #ffffff; font-weight: 900; font-size: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
                                     #{{ $rankIdx + 1 }}
                                 </div>
 
-                                <!-- Candidate Headshot -->
-                                <div style="width: 50px; height: 50px; border-radius: 50%; border: 2.5px solid #ffffff; overflow: hidden; background-color: #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                <!-- Centered Candidate Headshot -->
+                                <div style="width: 72px; height: 72px; border-radius: 50%; border: 3px solid #ffffff; overflow: hidden; background-color: #f1f5f9; box-shadow: 0 4px 10px rgba(0,0,0,0.25); margin-top: 4px; margin-bottom: 10px;">
                                     <img src="{{ asset($cPhoto) }}" alt="{{ $cand['name'] }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='/images/favicon.png';">
                                 </div>
 
-                                <!-- Name & Party -->
-                                <div>
-                                    <div style="font-weight: 800; font-size: 17px; color: #ffffff; line-height: 1.2;">{{ $cand['name'] }}</div>
-                                    <div style="font-weight: 700; font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-top: 2px; letter-spacing: 0.5px;">{{ $cand['party_name'] ?? 'INDEPENDENT' }}</div>
+                                <!-- Candidate Name & Party -->
+                                <div style="font-weight: 800; font-size: 15px; color: #ffffff; line-height: 1.2; width: 100%; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                    {{ $cand['name'] }}
                                 </div>
-                            </div>
+                                <div style="font-weight: 700; font-size: 10px; color: #94a3b8; text-transform: uppercase; margin-top: 3px; margin-bottom: 10px; letter-spacing: 0.5px;">
+                                    {{ $cand['party_name'] ?? 'INDEPENDENT' }}
+                                </div>
 
-                            <!-- Right: Percentage & Vote Tallies (No Voted Badge) -->
-                            <div style="position: relative; z-index: 10; text-align: right;">
-                                <div style="font-weight: 900; font-family: monospace, sans-serif; font-size: 30px; color: {{ $theme['solidColor'] }}; line-height: 1;">
+                                <!-- Large Percentage Score -->
+                                <div style="font-weight: 900; font-family: monospace, sans-serif; font-size: 28px; color: {{ $theme['solidColor'] }}; line-height: 1;">
                                     {{ $pct }}%
                                 </div>
-                                <div style="font-weight: 600; font-size: 11px; color: #cbd5e1; margin-top: 3px; font-family: monospace, sans-serif;">{{ number_format($cVotes) }} votes</div>
+
+                                <!-- Vote Tallies -->
+                                <div style="font-weight: 600; font-size: 11px; color: #cbd5e1; font-family: monospace, sans-serif; margin-top: 3px; margin-bottom: 8px;">
+                                    {{ number_format($cVotes) }} votes
+                                </div>
+
+                                <!-- Bottom Horizontal Color Line -->
+                                <div style="width: 80%; height: 4px; background-color: rgba(255,255,255,0.1); border-radius: 9999px; overflow: hidden; margin-top: auto;">
+                                    <div style="height: 100%; width: {{ $pct }}%; background-color: {{ $theme['solidColor'] }}; border-radius: 9999px;"></div>
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
-                </div>
+                        @endforeach
+                    </div>
+                @endif
 
                 <!-- 3. SUMMARY OF THE POLL -->
                 <div style="background-color: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 18px; position: relative; z-index: 10; margin-top: 16px;" class="space-y-2">
