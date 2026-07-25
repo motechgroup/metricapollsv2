@@ -212,7 +212,7 @@
                                 </div>
 
                                 <div>
-                                    <div style="font-weight: 800; font-size: 15px; color: #0f172a; line-height: 1.2;" class="sm:text-lg">{{ $cand['name'] }}</div>
+                                    <div style="font-weight: 800; font-size: 15px; color: #0f172a; line-height: 1.3;" class="sm:text-lg">{{ $cand['name'] }}</div>
                                     <div style="font-weight: 700; font-size: 11px; color: #64748b; text-transform: uppercase; margin-top: 2px; letter-spacing: 0.5px;" class="sm:text-xs">{{ $cand['party_name'] ?? 'NO PARTY' }}</div>
                                 </div>
                             </div>
@@ -264,10 +264,10 @@
                             </div>
 
                             <!-- Candidate Name & Party -->
-                            <div style="font-weight: 800; font-size: 13px; color: #0f172a; line-height: 1.2; width: 100%; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; position: relative; z-index: 10;" class="sm:text-base">
+                            <div style="font-weight: 800; font-size: 13px; color: #0f172a; line-height: 1.35; width: 100%; word-break: break-word; text-align: center; position: relative; z-index: 10;" class="sm:text-base">
                                 {{ $cand['name'] }}
                             </div>
-                            <div style="font-weight: 700; font-size: 10px; color: #64748b; text-transform: uppercase; margin-top: 2px; margin-bottom: 10px; letter-spacing: 0.5px; position: relative; z-index: 10;" class="sm:text-xs sm:mb-3">
+                            <div style="font-weight: 700; font-size: 10px; color: #64748b; text-transform: uppercase; margin-top: 3px; margin-bottom: 10px; letter-spacing: 0.5px; position: relative; z-index: 10;" class="sm:text-xs sm:mb-3">
                                 {{ $cand['party_name'] ?? 'NO PARTY' }}
                             </div>
 
@@ -394,7 +394,7 @@
                     </div>
 
                     <!-- Clean Poll Title Centered -->
-                    <h1 style="font-size: 26px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: -0.2px; line-height: 1.3; margin: 0 auto; max-width: 740px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                    <h1 style="font-size: 26px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: -0.2px; line-height: 1.35; margin: 0 auto; max-width: 740px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
                         {{ $poll->topic }}
                     </h1>
 
@@ -448,7 +448,7 @@
                                     </div>
 
                                     <div>
-                                        <div style="font-weight: 800; font-size: 17px; color: #ffffff; line-height: 1.2;">{{ $cand['name'] }}</div>
+                                        <div style="font-weight: 800; font-size: 17px; color: #ffffff; line-height: 1.35; word-break: break-word;">{{ $cand['name'] }}</div>
                                         <div style="font-weight: 700; font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-top: 2px; letter-spacing: 0.5px;">{{ $cand['party_name'] ?? 'INDEPENDENT' }}</div>
                                     </div>
                                 </div>
@@ -484,11 +484,11 @@
                                     <img src="{{ asset($cPhoto) }}" alt="{{ $cand['name'] }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='/images/favicon.png';">
                                 </div>
 
-                                <!-- Candidate Name & Party -->
-                                <div style="font-weight: 800; font-size: 15px; color: #ffffff; line-height: 1.2; width: 100%; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                <!-- Candidate Name & Party (Clean Uncropped Multi-line Style) -->
+                                <div style="font-weight: 800; font-size: 15px; color: #ffffff; line-height: 1.35; width: 100%; min-height: 42px; word-break: break-word; text-align: center; display: flex; align-items: center; justify-content: center;">
                                     {{ $cand['name'] }}
                                 </div>
-                                <div style="font-weight: 700; font-size: 10px; color: #94a3b8; text-transform: uppercase; margin-top: 3px; margin-bottom: 10px; letter-spacing: 0.5px;">
+                                <div style="font-weight: 700; font-size: 10px; color: #94a3b8; text-transform: uppercase; margin-top: 4px; margin-bottom: 10px; letter-spacing: 0.5px;">
                                     {{ $cand['party_name'] ?? 'INDEPENDENT' }}
                                 </div>
 
