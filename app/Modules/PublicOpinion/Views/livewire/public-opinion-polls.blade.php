@@ -1,58 +1,66 @@
-<div class="py-12 sm:py-20 bg-gray-50 flex-grow min-h-screen">
+<div class="py-12 sm:py-20 bg-slate-50 flex-grow min-h-screen font-sans">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
-        <!-- Header Banner -->
-        <div class="bg-gradient-to-r from-brand-navy via-blue-900 to-indigo-950 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden">
-            <div class="absolute -right-10 -bottom-10 opacity-10 w-96 h-96 rounded-full bg-white blur-3xl pointer-events-none"></div>
-            <div class="max-w-3xl space-y-3 relative z-10">
-                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-brand-teal backdrop-blur border border-white/10">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Real-Time Public Intelligence & Audit
+        <!-- Header Banner with Self-Contained Styles for Maximum Readability -->
+        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #090d16 100%); color: #ffffff; padding: 36px 32px; border-radius: 24px; box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.3);" class="relative overflow-hidden">
+            <div style="position: absolute; right: -40px; bottom: -40px; opacity: 0.1; width: 384px; height: 384px; border-radius: 50%; background-color: #ffffff; filter: blur(48px); pointer-events: none;"></div>
+            
+            <div style="position: relative; z-index: 10; max-width: 800px;" class="space-y-3">
+                <span style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 9999px; font-size: 12px; font-weight: 700; background-color: rgba(255,255,255,0.1); color: #38bdf8; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(4px);">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background-color: #34d399;" class="animate-ping"></span> Real-Time Public Intelligence & Audit
                 </span>
-                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight font-sans text-white">Public Opinion Polls & Results</h1>
-                <p class="text-base text-gray-200 leading-relaxed">
+                
+                <h1 style="font-size: 30px; font-weight: 900; color: #ffffff; letter-spacing: -0.5px; margin-top: 6px;" class="sm:text-4xl">
+                    Public Opinion Polls & Results
+                </h1>
+                
+                <p style="font-size: 15px; color: #cbd5e1; line-height: 1.6; font-weight: 400; margin-top: 6px;" class="sm:text-base">
                     Explore verified electoral popularity index and opinion poll findings across Kenya’s 8 Regions, 47 Counties, and Constituencies for positions such as Woman Representative, Governor, Senator, and President.
                 </p>
             </div>
         </div>
 
         @if (session()->has('success'))
-            <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-semibold rounded-xl flex items-center gap-3">
-                <span class="text-xl">✅</span> {{ session('success') }}
+            <div style="padding: 14px 18px; background-color: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 14px; font-weight: 600; border-radius: 16px; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 18px;">✅</span> {{ session('success') }}
             </div>
         @endif
 
         @if (session()->has('error'))
-            <div class="p-4 bg-red-50 border border-red-200 text-red-700 text-sm font-semibold rounded-xl flex items-center gap-3">
-                <span class="text-xl">⚠️</span> {{ session('error') }}
+            <div style="padding: 14px 18px; background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; font-size: 14px; font-weight: 600; border-radius: 16px; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 18px;">⚠️</span> {{ session('error') }}
             </div>
         @endif
 
         <!-- Filter & Search Bar Panel -->
-        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm space-y-4">
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 24px;" class="shadow-sm space-y-4">
             <!-- Status Tabs -->
-            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 pb-4">
-                <div class="flex items-center gap-2">
-                    <button wire:click="$set('statusFilter', 'all')" class="px-4 py-2 rounded-lg text-xs font-bold transition {{ $statusFilter === 'all' ? 'bg-brand-navy text-white shadow-sm' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button wire:click="$set('statusFilter', 'all')" 
+                            style="{{ $statusFilter === 'all' ? 'background-color: #0f172a; color: #ffffff;' : 'background-color: #f1f5f9; color: #475569;' }} border: none; padding: 8px 16px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; transition: all 150ms ease;">
                         All Results
                     </button>
-                    <button wire:click="$set('statusFilter', 'live')" class="px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 {{ $statusFilter === 'live' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                        <span class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span> Live Index
+                    <button wire:click="$set('statusFilter', 'live')" 
+                            style="{{ $statusFilter === 'live' ? 'background-color: #059669; color: #ffffff;' : 'background-color: #f1f5f9; color: #475569;' }} border: none; padding: 8px 16px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 150ms ease;">
+                        <span style="width: 7px; height: 7px; border-radius: 50%; background-color: #6ee7b7;" class="animate-pulse"></span> Live Index
                     </button>
-                    <button wire:click="$set('statusFilter', 'ended')" class="px-4 py-2 rounded-lg text-xs font-bold transition {{ $statusFilter === 'ended' ? 'bg-gray-900 text-white shadow-sm' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                    <button wire:click="$set('statusFilter', 'ended')" 
+                            style="{{ $statusFilter === 'ended' ? 'background-color: #0f172a; color: #ffffff;' : 'background-color: #f1f5f9; color: #475569;' }} border: none; padding: 8px 16px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; transition: all 150ms ease;">
                         🔴 Certified Final Results
                     </button>
                 </div>
 
                 <div class="w-full sm:w-auto">
-                    <input type="text" wire:model.live="search" placeholder="Search topic, candidate or region..." class="w-full sm:w-72 rounded-lg border border-gray-300 px-3.5 py-2 text-xs focus:ring-brand-blue focus:border-brand-blue">
+                    <input type="text" wire:model.live="search" placeholder="Search topic, candidate or region..." style="border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 10px; font-size: 12px; color: #0f172a; font-weight: 600;" class="w-full sm:w-72 focus:outline-none focus:border-blue-600">
                 </div>
             </div>
 
             <!-- Geographic & Position Filter Dropdowns -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-1">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-1">
                 <div>
-                    <label class="block text-xxs font-bold text-gray-500 uppercase tracking-wider mb-1">Region</label>
-                    <select wire:model.live="selectedRegion" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:ring-brand-blue focus:border-brand-blue">
+                    <label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">REGION</label>
+                    <select wire:model.live="selectedRegion" style="width: 100%; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; color: #0f172a; background-color: #ffffff;">
                         <option value="">All Regions (8)</option>
                         @foreach($regions as $reg)
                             <option value="{{ $reg->id }}">{{ $reg->name }}</option>
@@ -61,8 +69,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-xxs font-bold text-gray-500 uppercase tracking-wider mb-1">County</label>
-                    <select wire:model.live="selectedCounty" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:ring-brand-blue focus:border-brand-blue">
+                    <label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">COUNTY</label>
+                    <select wire:model.live="selectedCounty" style="width: 100%; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; color: #0f172a; background-color: #ffffff;">
                         <option value="">All Counties (47)</option>
                         @foreach($counties as $co)
                             <option value="{{ $co->id }}">{{ $co->name }} (Code {{ $co->code }})</option>
@@ -71,8 +79,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-xxs font-bold text-gray-500 uppercase tracking-wider mb-1">Constituency</label>
-                    <select wire:model.live="selectedConstituency" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:ring-brand-blue focus:border-brand-blue" {{ empty($selectedCounty) ? 'disabled' : '' }}>
+                    <label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">CONSTITUENCY</label>
+                    <select wire:model.live="selectedConstituency" style="width: 100%; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; color: #0f172a; background-color: #ffffff;" {{ empty($selectedCounty) ? 'disabled' : '' }}>
                         <option value="">All Constituencies</option>
                         @foreach($constituencies as $c)
                             <option value="{{ $c->id }}">{{ $c->name }}</option>
@@ -81,8 +89,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-xxs font-bold text-gray-500 uppercase tracking-wider mb-1">Position / Office</label>
-                    <select wire:model.live="selectedPosition" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:ring-brand-blue focus:border-brand-blue">
+                    <label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">POSITION / OFFICE</label>
+                    <select wire:model.live="selectedPosition" style="width: 100%; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; color: #0f172a; background-color: #ffffff;">
                         <option value="">All Positions</option>
                         <option value="Woman Representative">Woman Representative</option>
                         <option value="Governor">Governor</option>
@@ -97,23 +105,23 @@
         <!-- Poll Cards Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($polls as $poll)
-                <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-5 relative overflow-hidden group">
+                <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; gap: 18px;" class="shadow-xs hover:shadow-md transition group">
                     <div class="space-y-3">
                         <!-- Top Header: Status Badge & Location -->
-                        <div class="flex items-center justify-between gap-2 border-b border-gray-100 pb-3">
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
                             <div>
                                 @if($poll->status === 'live')
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xxs font-bold bg-emerald-100 text-emerald-800">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span> LIVE
+                                    <span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 800; background-color: #d1fae5; color: #065f46;">
+                                        <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #059669;" class="animate-pulse"></span> LIVE
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xxs font-bold bg-gray-900 text-white">
+                                    <span style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 800; background-color: #0f172a; color: #ffffff;">
                                         🔴 ENDED
                                     </span>
                                 @endif
                             </div>
 
-                            <span class="text-xs text-brand-blue font-bold truncate">
+                            <span style="font-size: 12px; font-weight: 700; color: #2563eb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">
                                 📍 
                                 @if($poll->constituency)
                                     {{ $poll->constituency->name }}, {{ $poll->county->name ?? '' }}
@@ -129,15 +137,15 @@
 
                         <!-- Poll Title -->
                         <a href="{{ route('public.opinion.show', $poll->id) }}" class="block">
-                            <h2 class="text-base font-bold text-gray-950 leading-snug group-hover:text-brand-navy transition line-clamp-2">
+                            <h2 style="font-size: 16px; font-weight: 800; color: #0f172a; line-height: 1.4;" class="group-hover:text-blue-600 transition">
                                 {{ $poll->topic }}
                             </h2>
                         </a>
 
-                        <!-- Position Title Badge if set -->
+                        <!-- Position Title Badge -->
                         @if($poll->position_title)
-                            <div class="pt-1">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xxs font-bold bg-blue-50 text-brand-blue border border-blue-100">
+                            <div style="padding-top: 4px;">
+                                <span style="display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; background-color: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;">
                                     Target Position: {{ $poll->position_title }}
                                 </span>
                             </div>
@@ -145,35 +153,35 @@
                     </div>
 
                     <!-- Meta Specs & Action Button -->
-                    <div class="space-y-4 pt-3 border-t border-gray-100">
-                        <div class="grid grid-cols-2 gap-2 text-xs text-gray-500">
+                    <div style="padding-top: 14px; border-top: 1px solid #f1f5f9;" class="space-y-4">
+                        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; font-size: 12px;">
                             <div>
-                                <span class="text-xxs font-semibold text-gray-400 block uppercase">End Date</span>
-                                <span class="font-bold text-gray-800">
+                                <span style="font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; display: block;">End Date</span>
+                                <span style="font-weight: 800; color: #334155;">
                                     {{ $poll->expires_at ? $poll->expires_at->format('M d, Y') : 'Ongoing' }}
                                 </span>
                             </div>
-                            <div class="text-right">
-                                <span class="text-xxs font-semibold text-gray-400 block uppercase">Total Votes</span>
-                                <span class="font-bold text-gray-900 font-mono">
+                            <div style="text-align: right;">
+                                <span style="font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; display: block;">Total Votes</span>
+                                <span style="font-weight: 900; color: #0f172a; font-family: monospace, sans-serif;">
                                     {{ number_format($poll->votes_count) }}
                                 </span>
                             </div>
                         </div>
 
-                        <a href="{{ route('public.opinion.show', $poll->id) }}" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-brand-navy hover:bg-brand-navy/90 text-white font-bold text-xs py-2.5 px-4 transition shadow-sm">
+                        <a href="{{ route('public.opinion.show', $poll->id) }}" style="width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; background-color: #0f172a; color: #ffffff; font-weight: 800; font-size: 12px; padding: 10px 16px; text-decoration: none; transition: background-color 150ms ease;" class="hover:bg-blue-600">
                             <span>View Poll Results</span>
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                             </svg>
                         </a>
                     </div>
                 </div>
             @empty
-                <div class="col-span-3 bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500 space-y-3">
-                    <div class="text-3xl">📊</div>
-                    <h3 class="text-base font-bold text-gray-900">No poll results found</h3>
-                    <p class="text-xs text-gray-500">Try adjusting your region, county, or status filter.</p>
+                <div style="grid-column: span 3; background-color: #ffffff; border-radius: 20px; border: 1px solid #e2e8f0; padding: 48px; text-align: center; color: #64748b;" class="space-y-3">
+                    <div style="font-size: 36px;">📊</div>
+                    <h3 style="font-size: 16px; font-weight: 800; color: #0f172a;">No poll results found</h3>
+                    <p style="font-size: 12px; color: #64748b;">Try adjusting your region, county, or status filter.</p>
                 </div>
             @endforelse
         </div>
