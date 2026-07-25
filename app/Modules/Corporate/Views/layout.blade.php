@@ -151,6 +151,7 @@
                 </div>
 
                 <nav class="hidden md:flex space-x-8 text-sm font-medium">
+                    <a href="{{ route('corporate.index') }}" class="text-gray-600 hover:text-gray-900 py-2">Home</a>
                     <a href="{{ route('corporate.features') }}" class="text-gray-600 hover:text-gray-900 py-2">Features</a>
                     <a href="{{ route('public.marketplace') }}" class="text-gray-600 hover:text-gray-900 py-2">Marketplace</a>
                     <a href="{{ route('public.opinion') }}" class="text-gray-600 hover:text-gray-900 py-2">Public Opinion</a>
@@ -201,6 +202,7 @@
                 <div>
                     <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Platform</h3>
                     <ul class="mt-4 space-y-2 text-sm">
+                        <li><a href="{{ route('corporate.index') }}" class="text-gray-600 hover:text-gray-900">Home</a></li>
                         <li><a href="{{ route('corporate.features') }}" class="text-gray-600 hover:text-gray-900">Features</a></li>
                         <li><a href="{{ route('public.marketplace') }}" class="text-gray-600 hover:text-gray-900">Marketplace</a></li>
                         <li><a href="{{ route('public.opinion') }}" class="text-gray-600 hover:text-gray-900">Public Opinion</a></li>
